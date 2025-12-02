@@ -1,0 +1,64 @@
+# config/base.yaml
+# Base config for RAVDESS multimodal emotion detection (audio + video)
+
+seed: 42
+
+experiment:
+  name: "ravdess_audio_video_baseline"
+  save_dir: "./outputs"            # trainer will use: save_dir/name/...
+  save_top_k: 1
+  log_every_n_steps: 50
+
+dataset:
+  name: "ravdess"                  # anything != 'synthetic' → MultimodalDataset
+  data_dir: "../multimodal-dataset"   # where dataprocessing.py wrote train/val/test
+  modalities: ["audio", "video"]
+  batch_size: 32
+  num_workers: 4
+  num_classes: 8                   # neutral, calm, happy, sad, angry, fearful, disgust, surprised
+
+model:
+  # per-modality encoder output dim
+  output_dim: 128                  # each encoder → 128-dim embedding
+  # fusion module configuration
+  fusion_type: "early"            # depends on your fusion.build_fusion_model
+  hidden_dim: 256                  # hidden dim inside fusion head
+  num_heads: 4                     # only used if your fusion needs it (e.g., attention)
+  dropout: 0.3
+
+  # Encoders per modality. These dicts are passed to build_encoder.
+  encoders:
+    audio:
+      type: "sequence"             # routed to SequenceEncoder
+      input_dim: 1                 # raw waveform shape: (B, 16000, 1)
+      encoder_type: "cnn"          # or 'lstm', 'gru', 'transformer'
+      hidden_dim: 256
+      output_dim: 128
+      num_layers: 2
+      dropout: 0.1
+
+    video:
+      type: "frame"                # routed to FrameEncoder
+      input_dim: 1024              # 32 x 32 grayscale flattened
+      temporal_pooling: "attention" # 'attention', 'average', 'max'
+      hidden_dim: 256
+      output_dim: 128
+      dropout: 0.1
+
+training:
+  optimizer: "adamw"               # 'adamw' or 'adam'
+  learning_rate: 1.0e-3
+  weight_decay: 1.0e-4
+  scheduler: "none"                # 'none', 'cosine', or 'step'
+  max_epochs: 50
+  early_stopping_patience: 10
+  gradient_clip_norm: 1.0
+
+  augmentation:
+    modality_dropout: 0.1          # passed into create_dataloaders
+
+evaluation:
+  num_calibration_bins: 15         # used for uncertainty fusion metrics
+
+outputs:
+  experiments_dir: "./experiments" # where uncertainty.json is written (if used)
