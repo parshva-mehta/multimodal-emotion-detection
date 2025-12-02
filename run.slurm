@@ -16,33 +16,28 @@
 mkdir -p slurm
 
 # -------------------------
-# 1) Load modules (same style as a1 job)
+# 1) Load modules
 # -------------------------
 module purge
 module use /projects/community/modulefiles
 module load gcc/10.2.0/openmpi
 module load cuda/12.1
-# module load fa2/2.4   # not needed here unless you really want it
 
 # -------------------------
 # 2) Go to project root
 # -------------------------
 cd /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection
 
-# ------------------------
-# 3) uv + venv setup
-#    - use local .venv as in your a1 script
 # -------------------------
-# If .venv doesn't exist yet, create a uv-managed venv once
+# 3) uv + venv setup
+# -------------------------
 if [ ! -d ".venv" ]; then
   echo "No .venv found, creating a new one with uv venv..."
   uv venv .venv
 fi
 
-# Activate venv
 source .venv/bin/activate
 
-# Sync dependencies from pyproject.toml
 echo "Syncing environment with uv..."
 uv sync
 
@@ -52,9 +47,9 @@ export SSL_CERT_FILE=$(uv run python -c "import certifi; print(certifi.where())"
 # -------------------------
 # 4) Project-specific env / paths
 # -------------------------
-# (adjust if you want a different data root)
-export RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection/multimodal-dataset
-export PYTHONPATH=$PYTHONPATH:mutlimodal-variant/src
+# adjust this if your dataset is actually under a different tree
+export RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-dataset
+export PYTHONPATH=$PYTHONPATH:src
 export CUDA_VISIBLE_DEVICES=0
 
 # -------------------------
@@ -69,18 +64,16 @@ echo "Start Time:      $(date)"
 echo "Python Path:     $PYTHONPATH"
 echo "RAVDESS Root:    $RAVDESS_DATA_ROOT"
 
-# Check GPU availability
 nvidia-smi
 
 # -------------------------
 # 6) (Optional) Run preprocessing on the cluster
 # -------------------------
-# If you haven't run dataprocessing.py on Amarel yet, uncomment this block once:
 # echo "Running RAVDESS preprocessing..."
-# uv run python mutlimodal-variant/src/dataprocessing.py \
-#   --audio_root multimodal-dataset/Audio_Speech_Actors_01-24 \
-#   --video_root multimodal-dataset/Video_Speech_Actors_01-24 \
-#   --out_root multimodal-dataset \
+# uv run python src/dataprocessing.py \
+#   --audio_root "$RAVDESS_DATA_ROOT/Audio_Speech_Actors_01-24" \
+#   --video_root "$RAVDESS_DATA_ROOT/Video_Speech_Actors_01-24" \
+#   --out_root "$RAVDESS_DATA_ROOT" \
 #   --val_size 0.1 \
 #   --test_size 0.1
 
@@ -88,7 +81,7 @@ nvidia-smi
 # 7) Run training (via uv)
 # -------------------------
 echo "Starting RAVDESS multimodal training..."
-uv run python mutlimodal-variant/src/train.py \
+uv run python src/train.py \
   experiment.name=ravdess_audio_video_baseline \
   dataset.name=ravdess \
   dataset.data_dir="$RAVDESS_DATA_ROOT" \
@@ -97,7 +90,6 @@ uv run python mutlimodal-variant/src/train.py \
 
 echo "Job completed at: $(date)"
 
-# Optionally list some outputs
 echo "Outputs:"
 ls -la checkpoints/ 2>/dev/null || true
 ls -la outputs/ 2>/dev/null || true
