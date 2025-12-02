@@ -31,7 +31,7 @@ model:
     audio:
       type: "sequence"             # routed to SequenceEncoder
       input_dim: 1                 # raw waveform shape: (B, 16000, 1)
-      encoder_type: "cnn"          # or 'lstm', 'gru', 'transformer'
+      encoder_type: "lstm"          # or 'lstm', 'gru', 'transformer'
       hidden_dim: 256
       output_dim: 128
       num_layers: 2
@@ -39,7 +39,7 @@ model:
 
     video:
       type: "frame"                # routed to FrameEncoder
-      input_dim: 1024              # 32 x 32 grayscale flattened
+      input_dim: 4096              # 32 x 32 grayscale flattened
       temporal_pooling: "attention" # 'attention', 'average', 'max'
       hidden_dim: 256
       output_dim: 128

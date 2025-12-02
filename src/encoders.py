@@ -10,7 +10,7 @@ Implements lightweight encoders suitable for CPU training:
 import torch
 import torch.nn as nn
 from typing import Optional
-
+import torchvision.models as tv_models  # <-- add this
 
 class SequenceEncoder(nn.Module):
     """
@@ -395,6 +395,139 @@ class SimpleMLPEncoder(nn.Module):
             return x
         return self.encoder(features)
         
+        
+
+class PretrainedCNNEncoder(nn.Module):
+    """
+    Encoder that uses a pretrained 2D CNN backbone (e.g., ResNet) for frame/image data.
+
+    Supports:
+      - Single images: (B, C, H, W)
+      - Frame sequences: (B, T, C, H, W) with temporal pooling
+
+    Typical use: video frames, face crops, spectrogram images, etc.
+    """
+
+    def __init__(
+        self,
+        backbone: str = "resnet18",
+        output_dim: int = 128,
+        pretrained: bool = True,
+        freeze_backbone: bool = False,
+        temporal_pooling: str = "average",  # 'average' | 'max' | 'attention'
+        dropout: float = 0.1,
+    ):
+        super().__init__()
+        self.temporal_pooling = temporal_pooling
+
+        # ---- Build backbone ----
+        if backbone == "resnet18":
+            self.backbone = tv_models.resnet18(pretrained=pretrained)
+        elif backbone == "resnet34":
+            self.backbone = tv_models.resnet34(pretrained=pretrained)
+        elif backbone == "resnet50":
+            self.backbone = tv_models.resnet50(pretrained=pretrained)
+        else:
+            raise ValueError(f"Unsupported backbone: {backbone}")
+
+        # Replace final classification layer with identity to get feature vector
+        if hasattr(self.backbone, "fc"):
+            feat_dim = self.backbone.fc.in_features
+            self.backbone.fc = nn.Identity()
+        else:
+            raise RuntimeError("Backbone without .fc not supported in this encoder.")
+
+        if freeze_backbone:
+            for p in self.backbone.parameters():
+                p.requires_grad = False
+
+        self._dropout = nn.Dropout(dropout)
+
+        # Optional attention over time (when input is (B, T, C, H, W))
+        if temporal_pooling == "attention":
+            self.attention = nn.Linear(feat_dim, 1)
+        elif temporal_pooling in {"average", "max"}:
+            self.attention = None
+        else:
+            raise ValueError(f"Unknown temporal_pooling: {temporal_pooling}")
+
+        # Final projection
+        self.projection = nn.Sequential(
+            nn.LayerNorm(feat_dim),
+            nn.Linear(feat_dim, output_dim),
+        )
+
+    def forward(
+        self,
+        frames: torch.Tensor,
+        mask: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
+        """
+        Args:
+            frames:
+                - (B, C, H, W)  or
+                - (B, T, C, H, W)
+            mask: Optional (B, T) indicating valid frames (for sequences)
+
+        Returns:
+            (B, output_dim)
+        """
+        if frames.dim() == 4:
+            # (B, C, H, W) -> just run backbone once per image
+            feats = self.backbone(frames)  # (B, F)
+            feats = self._dropout(feats)
+            return self.projection(feats)
+
+        if frames.dim() == 5:
+            # (B, T, C, H, W) -> flatten time into batch
+            B, T, C, H, W = frames.shape
+            x = frames.view(B * T, C, H, W)          # (B*T, C, H, W)
+            x = self.backbone(x)                     # (B*T, F)
+            x = x.view(B, T, -1)                     # (B, T, F)
+
+            if self.temporal_pooling == "attention":
+                feats = self._attention_pool(x, mask=mask)  # (B, F)
+            elif self.temporal_pooling == "average":
+                if mask is not None:
+                    m = mask.float().unsqueeze(-1)  # (B, T, 1)
+                    summed = (x * m).sum(dim=1)
+                    denom = m.sum(dim=1).clamp_min(1.0)
+                    feats = summed / denom
+                else:
+                    feats = x.mean(dim=1)
+            elif self.temporal_pooling == "max":
+                if mask is not None:
+                    very_neg = torch.finfo(x.dtype).min
+                    mask_bool = mask.bool().unsqueeze(-1)
+                    x_masked = x.masked_fill(~mask_bool, very_neg)
+                    feats, _ = x_masked.max(dim=1)
+                else:
+                    feats, _ = x.max(dim=1)
+            else:
+                raise ValueError(f"Unknown temporal_pooling: {self.temporal_pooling}")
+
+            feats = self._dropout(feats)
+            return self.projection(feats)
+
+        raise ValueError(f"Expected frames dim 4 or 5, got shape {frames.shape}")
+
+    def _attention_pool(
+        self,
+        x: torch.Tensor,
+        mask: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
+        """
+        Attention over time dimension for features x of shape (B, T, F).
+        """
+        scores = self.attention(x).squeeze(-1)  # (B, T)
+        if mask is not None:
+            very_neg = torch.finfo(scores.dtype).min
+            mask_bool = mask.bool()
+            scores = scores.masked_fill(~mask_bool, very_neg)
+        weights = torch.softmax(scores, dim=1)  # (B, T)
+        pooled = torch.einsum("bt,btf->bf", weights, x)
+        return pooled
+
 
 def build_encoder(
     modality: str,
@@ -482,6 +615,23 @@ def build_encoder(
             batch_norm=batch_norm,
         )
 
+    elif enc_type == "pretrained_cnn":
+        # Pretrained 2D CNN backbone for frames/images
+        backbone = cfg.pop("backbone", "resnet18")
+        pretrained = cfg.pop("pretrained", True)
+        freeze_backbone = cfg.pop("freeze_backbone", False)
+        temporal_pooling = cfg.pop("temporal_pooling", "average")
+        dropout = cfg.pop("dropout", 0.1)
+
+        return PretrainedCNNEncoder(
+            backbone=backbone,
+            output_dim=output_dim,
+            pretrained=pretrained,
+            freeze_backbone=freeze_backbone,
+            temporal_pooling=temporal_pooling,
+            dropout=dropout,
+        )
+        
     else:
         raise ValueError(f"Unknown encoder type '{enc_type}' for modality '{modality}'")
 

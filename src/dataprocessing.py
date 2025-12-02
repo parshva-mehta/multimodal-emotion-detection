@@ -9,8 +9,8 @@ Output structure:
 
 out_root/
     train/
-        audio.npy    # (N_train, T_audio, 1)     raw waveform sequences
-        video.npy    # (N_train, T_video, F_v)   grayscale frames flattened
+        audio.npy    # (N_train, T_audio, 1)          raw waveform sequences
+        video.npy    # (N_train, T_video, F_v)        grayscale frames flattened
         labels.npy   # (N_train,)
     val/
         ...
@@ -49,16 +49,16 @@ from sklearn.model_selection import train_test_split
 # Global hyperparameters
 # =============================
 
-# Audio: use relatively small sr & duration to control size
-AUDIO_SR = 8000              # Hz (change to 16000 if you want more resolution)
-AUDIO_MAX_DURATION = 2.0     # seconds -> T_audio = AUDIO_SR * AUDIO_MAX_DURATION
-# T_audio = 16000 at 8kHz / 2s
+# Audio: higher sampling rate & slightly longer duration (still CPU-manageable)
+AUDIO_SR = 16000             # Hz
+AUDIO_MAX_DURATION = 3.0     # seconds -> T_audio = AUDIO_SR * AUDIO_MAX_DURATION
+# T_audio = 48000 at 16kHz / 3s
 
-# Video: number of frames & spatial size
-VIDEO_MAX_FRAMES = 16        # T_video
-VIDEO_H = 32                 # height
-VIDEO_W = 32                 # width
-# frame_dim for FrameEncoder = VIDEO_H * VIDEO_W (grayscale)
+# Video: more frames & larger spatial size, but still safe on CPU
+VIDEO_MAX_FRAMES = 24        # T_video
+VIDEO_H = 64                 # height
+VIDEO_W = 64                 # width
+# frame_dim for FrameEncoder = VIDEO_H * VIDEO_W (grayscale) = 4096
 
 
 # -----------------------------
@@ -177,7 +177,6 @@ def build_join_key_map(filepaths: List[Path]) -> Dict[str, Path]:
     return join_map
 
 
-
 # -----------------------------
 # Raw audio extraction
 # -----------------------------
@@ -214,7 +213,7 @@ def load_raw_audio(
 
 
 # -----------------------------
-# Raw video frame extraction
+# Raw video frame extraction (grayscale, flattened)
 # -----------------------------
 
 def load_raw_video_frames(
@@ -261,7 +260,9 @@ def load_raw_video_frames(
         frame = frames[idx]
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.resize(gray, (frame_width, frame_height), interpolation=cv2.INTER_AREA)
-        feat = gray.astype(np.float32).reshape(-1)  # (H*W,)
+        # Normalize to [0, 1] for stability
+        gray = gray.astype(np.float32) / 255.0
+        feat = gray.reshape(-1)  # (H*W,)
         feat_frames.append(feat)
 
     feat_frames = np.stack(feat_frames, axis=0)  # (T_used, F_v)
@@ -497,7 +498,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Preprocess RAVDESS (raw audio + raw frames) into MultimodalDataset format."
+        description="Preprocess RAVDESS (raw audio + grayscale frames) into MultimodalDataset format."
     )
     parser.add_argument("--audio_root", type=str, required=True,
                         help="Path to folder containing all RAVDESS .wav files.")
@@ -505,9 +506,9 @@ if __name__ == "__main__":
                         help="Path to folder containing all RAVDESS .mp4 files.")
     parser.add_argument("--out_root", type=str, required=True,
                         help="Output directory for preprocessed .npy files.")
-    parser.add_argument("--val_size", type=float, default=0.1,
+    parser.add_argument("--val_size", type=float, default=0.15,
                         help="Fraction of data used for validation.")
-    parser.add_argument("--test_size", type=float, default=0.1,
+    parser.add_argument("--test_size", type=float, default=0.15,
                         help="Fraction of data used for test.")
     parser.add_argument("--no_video", action="store_true",
                         help="If set, ignore video and preprocess audio only.")
