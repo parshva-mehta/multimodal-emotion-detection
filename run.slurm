@@ -1,15 +1,16 @@
 #!/bin/bash
-#SBATCH --job-name=ravdess-mm
-#SBATCH --partition=main
+#SBATCH --job-name=multimodal-emotion-detection
+#SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=12:00:00
 #SBATCH --mem=32G
 #SBATCH --cpus-per-task=8
 #SBATCH --constraint=ampere
+#SBATCH --exclude=gpu[015-016,021,025-027,028],gpuk[005-006]
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=${USER}@rutgers.edu
-#SBATCH --output=slurm_%j.out
-#SBATCH --error=slurm_%j.err
+#SBATCH --output=slurm/slurm_%j.out
+#SBATCH --error=slurm/slurm_%j.err
 
 # -------------------------
 # 1) Load modules
