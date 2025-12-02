@@ -21,6 +21,7 @@ module load anaconda3/2024.05
 # 2) Activate conda env
 # -------------------------
 source ~/.bashrc
+conda env create -f environment.yml -n multimodal-emotion-detection
 conda activate multimodal-emotion-detection
 
 # -------------------------
