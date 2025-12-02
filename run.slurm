@@ -38,7 +38,7 @@ mkdir -p logs
 # ------------------------------------------------------------------
 # 4) Run training
 # ------------------------------------------------------------------
-python /src/train.py \
+python src/train.py \
   experiment.name=ravdess_audio_video_baseline \
   dataset.name=ravdess \
   dataset.data_dir=multimodal-dataset \
