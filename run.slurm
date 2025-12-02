@@ -53,7 +53,7 @@ export SSL_CERT_FILE=$(uv run python -c "import certifi; print(certifi.where())"
 # 4) Project-specific env / paths
 # -------------------------
 # (adjust if you want a different data root)
-export RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection/multimodal-dataset
+export RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-dataset
 export PYTHONPATH=$PYTHONPATH:/src
 export CUDA_VISIBLE_DEVICES=0
 
