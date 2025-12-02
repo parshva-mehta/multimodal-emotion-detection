@@ -451,7 +451,7 @@ def main(config: DictConfig):
     # Trainer
     trainer = pl.Trainer(
         max_epochs=config.training.max_epochs,
-        accelerator="cpu",   # lets PL pick cpu/mps/cuda
+        accelerator="gpu",   # lets PL pick cpu/mps/cuda
         devices=1,
         logger=[tb_logger, csv_logger],
         callbacks=[checkpoint_callback, early_stopping, lr_monitor],
