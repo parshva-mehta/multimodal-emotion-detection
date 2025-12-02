@@ -1,4 +1,5 @@
 #!/bin/bash
+set -xeuo pipefail
 #SBATCH --job-name=ravdess-mm
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
@@ -11,6 +12,8 @@
 #SBATCH --mail-user=${USER}@rutgers.edu
 #SBATCH --output=slurm/slurm_%j.out
 #SBATCH --error=slurm/slurm_%j.err
+
+echo "SLURM script started at: $(date)"
 
 # Ensure SLURM log directory exists
 mkdir -p slurm
