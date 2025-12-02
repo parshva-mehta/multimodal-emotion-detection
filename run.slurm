@@ -1,46 +1,69 @@
 #!/bin/bash
-#
-#SBATCH -J ravdess_fusion           # Job name
-#SBATCH -p main                     # Partition (queue) to use
-#SBATCH -N 1                        # Number of nodes
-#SBATCH -n 1                        # Number of tasks
-#SBATCH -c 8                        # CPU cores per task
-#SBATCH --mem=32G                   # Memory per node
-#SBATCH -t 24:00:00                 # Walltime (hh:mm:ss)
-#SBATCH -o logs/ravdess_%j.out      # STDOUT (%j = job ID)
-#SBATCH -e logs/ravdess_%j.err      # STDERR
-#SBATCH --mail-type=END,FAIL        # Email on end/fail
-#SBATCH --mail-user=<NETID>@rutgers.edu  # <-- change to your Rutgers email
+#SBATCH --job-name=ravdess-mm
+#SBATCH --gres=gpu:1
+#SBATCH --time=12:00:00
+#SBATCH --mem=32G
+#SBATCH --cpus-per-task=8
+#SBATCH --constraint=ampere
+#SBATCH --exclude=gpu[015-016,021,025-027,028],gpuk[005-006]
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=${USER}@rutgers.edu
+#SBATCH --output=slurm_%j.out
+#SBATCH --error=slurm_%j.err
 
-# ------------------------------------------------------------------
-# 1) Load Anaconda on Amarel and enable conda
-# ------------------------------------------------------------------
-module use /projects/community/modulefiles
-module load anaconda/2020.07-gc563
+# -------------------------
+# 1) Load modules
+# -------------------------
+module purge
+module load anaconda3/2024.05
 
-# Make sure conda is available in non-interactive shells
+# -------------------------
+# 2) Activate conda env
+# -------------------------
 source ~/.bashrc
-
-# ------------------------------------------------------------------
-# 2) Activate your conda environment
-# ------------------------------------------------------------------
-conda env create -f environment.yml -n multimodal-emotion-detection
 conda activate multimodal-emotion-detection
 
-# ------------------------------------------------------------------
-# 3) Go to your project directory
-# ------------------------------------------------------------------
-cd /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection   # <-- change path to your repo root
+# -------------------------
+# 3) Go to project root
+# -------------------------
+cd /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection
 
-# Ensure logs directory exists (sbatch won't create nested dirs automatically)
-mkdir -p logs
 
-# ------------------------------------------------------------------
-# 4) Run training
-# ------------------------------------------------------------------
-python src/train.py \
+# -------------------------
+# 4) Print job info
+# -------------------------
+echo "Job ID:        $SLURM_JOB_ID"
+echo "Job Name:      $SLURM_JOB_NAME"
+echo "Node:          $SLURM_NODELIST"
+echo "CPUs:          $SLURM_CPUS_PER_TASK"
+echo "Memory:        $SLURM_MEM_PER_NODE"
+echo "Working Dir:   $(pwd)"
+echo "Python:        $(which python)"
+python --version
+echo "PYTHONPATH:    $PYTHONPATH"
+echo "Start Time:    $(date)"
+
+# -------------------------
+# 5) (Optional) Preprocess RAVDESS on Amarel
+# -------------------------
+# Uncomment this block if you need to regenerate the .npy splits on the cluster.
+# echo "Running RAVDESS preprocessing..."
+# python mutlimodal-variant/src/dataprocessing.py \
+#   --audio_root multimodal-dataset/Audio_Speech_Actors_01-24 \
+#   --video_root multimodal-dataset/Video_Speech_Actors_01-24 \
+#   --out_root multimodal-dataset \
+#   --val_size 0.1 \
+#   --test_size 0.1
+
+# -------------------------
+# 6) Run training
+# -------------------------
+echo "Starting multimodal RAVDESS training..."
+python /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/train.py \
   experiment.name=ravdess_audio_video_baseline \
   dataset.name=ravdess \
   dataset.data_dir=multimodal-dataset \
   dataset.modalities='[audio, video]' \
   dataset.num_classes=8
+
+echo "End Time: $(date)"
