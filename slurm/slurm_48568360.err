@@ -1,0 +1,19 @@
+Lmod has detected the following error: The following module(s) are unknown:
+"anaconda3/2024.05"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "anaconda3/2024.05"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+/var/lib/slurm/slurmd/job48568360/slurm_script: line 25: conda: command not found
+/var/lib/slurm/slurmd/job48568360/slurm_script: line 26: conda: command not found
+Python 2.7.5
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/train.py", line 33
+    def __init__(self, config: DictConfig):
+                             ^
+SyntaxError: invalid syntax

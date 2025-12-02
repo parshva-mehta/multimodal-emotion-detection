@@ -1,0 +1,60 @@
+Resolved 157 packages in 3ms
+Audited 148 packages in 391ms
+/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_audio_video_ba ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_audio_video_ba ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/callbacks/model_checkpoint.py:615: UserWarning: Checkpoint directory outputs/ravdess_audio_video_baseline/checkpoints exists and is not empty.
+  rank_zero_warn(f"Checkpoint directory {dirpath} exists and is not empty.")
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name         | Type             | Params
+--------------------------------------------------
+0 | encoders     | ModuleDict       | 1.1 M 
+1 | fusion_model | EarlyFusion      | 134 K 
+2 | criterion    | CrossEntropyLoss | 0     
+--------------------------------------------------
+1.3 M     Trainable params
+0         Non-trainable params
+1.3 M     Total params
+5.021     Total estimated model params size (MB)
+/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.070
+Metric val/loss improved by 0.005 >= min_delta = 0.0. New best score: 2.065
+Metric val/loss improved by 0.004 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.060
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.058
+Monitored metric val/loss did not improve in the last 10 records. Best score: 2.058. Signaling Trainer to stop.
+Error executing job with overrides: ['experiment.name=ravdess_audio_video_baseline', 'dataset.name=ravdess', 'dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset', 'dataset.modalities=[audio, video]', 'dataset.num_classes=8']
+Traceback (most recent call last):
+  File "/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/train.py", line 480, in main
+    trainer.test(model, test_loader, ckpt_path=best_model_path)
+  File "/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 737, in test
+    return call._call_and_handle_interrupt(
+  File "/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 42, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 780, in _test_impl
+    results = self._run(model, ckpt_path=ckpt_path)
+  File "/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 923, in _run
+    _verify_loop_configurations(self)
+  File "/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/configuration_validator.py", line 42, in _verify_loop_configurations
+    __verify_eval_loop_configuration(model, "test")
+  File "/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/configuration_validator.py", line 111, in __verify_eval_loop_configuration
+    raise NotImplementedError(
+NotImplementedError: Support for `test_epoch_end` has been removed in v2.0.0. `MultimodalFusionModule` implements this method. You can use the `on_test_epoch_end` hook instead. To access outputs, save them in-memory as instance attributes. You can find migration examples in https://github.com/Lightning-AI/lightning/pull/16520.
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

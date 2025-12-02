@@ -1,0 +1,18 @@
+Resolved 157 packages in 2ms
+Audited 148 packages in 9ms
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+Error executing job with overrides: ['experiment.name=ravdess_audio_video_baseline', 'dataset.name=ravdess', 'dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset', 'dataset.modalities=[audio, video]', 'dataset.num_classes=8']
+Traceback (most recent call last):
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/train.py", line 399, in main
+    train_loader, val_loader, test_loader = create_dataloaders(
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/data.py", line 260, in create_dataloaders
+    train_dataset = MultimodalDataset(
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/data.py", line 49, in __init__
+    self.data, self.labels = self._load_data()
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/data.py", line 75, in _load_data
+    raise FileNotFoundError(f"Modality file not found: {modality_file}")
+FileNotFoundError: Modality file not found: /scratch/pbm52/emotion-detection-mm/multimodal-dataset/train/audio.npy
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
