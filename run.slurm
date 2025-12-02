@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=ravdess-mm
-#SBATCH --partition=gpu_a100  
+#SBATCH --partition=main
 #SBATCH --gres=gpu:1
 #SBATCH --time=12:00:00
 #SBATCH --mem=32G
