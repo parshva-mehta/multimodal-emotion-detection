@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=multimodal-emotion-detection
+#SBATCH --job-name=ravdess-mm
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --time=12:00:00
@@ -12,45 +12,72 @@
 #SBATCH --output=slurm/slurm_%j.out
 #SBATCH --error=slurm/slurm_%j.err
 
+# Ensure SLURM log directory exists
+mkdir -p slurm
+
 # -------------------------
-# 1) Load modules
+# 1) Load modules (same style as a1 job)
 # -------------------------
 module purge
-module load anaconda3/2024.05
+module use /projects/community/modulefiles
+module load gcc/10.2.0/openmpi
+module load cuda/12.1
+# module load fa2/2.4   # not needed here unless you really want it
 
 # -------------------------
-# 2) Activate conda env
-# -------------------------
-source ~/.bashrc
-conda env create -f environment.yml -n multimodal-emotion-detection
-conda activate multimodal-emotion-detection
-
-# -------------------------
-# 3) Go to project root
+# 2) Go to project root
 # -------------------------
 cd /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection
 
+# ------------------------
+# 3) uv + venv setup
+#    - use local .venv as in your a1 script
+# -------------------------
+# If .venv doesn't exist yet, create a uv-managed venv once
+if [ ! -d ".venv" ]; then
+  echo "No .venv found, creating a new one with uv venv..."
+  uv venv .venv
+fi
+
+# Activate venv
+source .venv/bin/activate
+
+# Sync dependencies from pyproject.toml
+echo "Syncing environment with uv..."
+uv sync
+
+# Ensure SSL certs work inside cluster
+export SSL_CERT_FILE=$(uv run python -c "import certifi; print(certifi.where())")
 
 # -------------------------
-# 4) Print job info
+# 4) Project-specific env / paths
 # -------------------------
-echo "Job ID:        $SLURM_JOB_ID"
-echo "Job Name:      $SLURM_JOB_NAME"
-echo "Node:          $SLURM_NODELIST"
-echo "CPUs:          $SLURM_CPUS_PER_TASK"
-echo "Memory:        $SLURM_MEM_PER_NODE"
-echo "Working Dir:   $(pwd)"
-echo "Python:        $(which python)"
-python --version
-echo "PYTHONPATH:    $PYTHONPATH"
-echo "Start Time:    $(date)"
+# (adjust if you want a different data root)
+export RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection/multimodal-dataset
+export PYTHONPATH=$PYTHONPATH:mutlimodal-variant/src
+export CUDA_VISIBLE_DEVICES=0
 
 # -------------------------
-# 5) (Optional) Preprocess RAVDESS on Amarel
+# 5) Print job information
 # -------------------------
-# Uncomment this block if you need to regenerate the .npy splits on the cluster.
+echo "Job ID:          $SLURM_JOB_ID"
+echo "Job Name:        $SLURM_JOB_NAME"
+echo "Node:            $SLURM_NODELIST"
+echo "GPU:             $CUDA_VISIBLE_DEVICES"
+echo "Working Dir:     $(pwd)"
+echo "Start Time:      $(date)"
+echo "Python Path:     $PYTHONPATH"
+echo "RAVDESS Root:    $RAVDESS_DATA_ROOT"
+
+# Check GPU availability
+nvidia-smi
+
+# -------------------------
+# 6) (Optional) Run preprocessing on the cluster
+# -------------------------
+# If you haven't run dataprocessing.py on Amarel yet, uncomment this block once:
 # echo "Running RAVDESS preprocessing..."
-# python mutlimodal-variant/src/dataprocessing.py \
+# uv run python mutlimodal-variant/src/dataprocessing.py \
 #   --audio_root multimodal-dataset/Audio_Speech_Actors_01-24 \
 #   --video_root multimodal-dataset/Video_Speech_Actors_01-24 \
 #   --out_root multimodal-dataset \
@@ -58,14 +85,19 @@ echo "Start Time:    $(date)"
 #   --test_size 0.1
 
 # -------------------------
-# 6) Run training
+# 7) Run training (via uv)
 # -------------------------
-echo "Starting multimodal RAVDESS training..."
-python /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/train.py \
+echo "Starting RAVDESS multimodal training..."
+uv run python mutlimodal-variant/src/train.py \
   experiment.name=ravdess_audio_video_baseline \
   dataset.name=ravdess \
-  dataset.data_dir=multimodal-dataset \
+  dataset.data_dir="$RAVDESS_DATA_ROOT" \
   dataset.modalities='[audio, video]' \
   dataset.num_classes=8
 
-echo "End Time: $(date)"
+echo "Job completed at: $(date)"
+
+# Optionally list some outputs
+echo "Outputs:"
+ls -la checkpoints/ 2>/dev/null || true
+ls -la outputs/ 2>/dev/null || true
