@@ -21,6 +21,8 @@ from pathlib import Path
 import json
 import shutil
 from sklearn.metrics import confusion_matrix
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 from data import create_dataloaders

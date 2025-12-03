@@ -1,0 +1,15 @@
+Lmod has detected the following error: The following module(s) are unknown:
+"anaconda/2020.07-gc563"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "anaconda/2020.07-gc563"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+/var/lib/slurm/slurmd/job48568313/slurm_script: line 27: conda: command not found
+/var/lib/slurm/slurmd/job48568313/slurm_script: line 28: conda: command not found
+python: can't open file '/src/train.py': [Errno 2] No such file or directory

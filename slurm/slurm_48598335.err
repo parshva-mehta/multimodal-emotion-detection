@@ -1,0 +1,76 @@
+Resolved 157 packages in 4ms
+Audited 148 packages in 720ms
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_audio_video_ba ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_audio_video_ba ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/callbacks/model_checkpoint.py:615: UserWarning: Checkpoint directory outputs/ravdess_audio_video_baseline/checkpoints exists and is not empty.
+  rank_zero_warn(f"Checkpoint directory {dirpath} exists and is not empty.")
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name         | Type             | Params
+--------------------------------------------------
+0 | encoders     | ModuleDict       | 1.1 M 
+1 | fusion_model | EarlyFusion      | 134 K 
+2 | criterion    | CrossEntropyLoss | 0     
+--------------------------------------------------
+1.3 M     Trainable params
+0         Non-trainable params
+1.3 M     Total params
+5.021     Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.071
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.071
+Metric val/loss improved by 0.003 >= min_delta = 0.0. New best score: 2.068
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.068
+Metric val/loss improved by 0.007 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.060
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.058
+Monitored metric val/loss did not improve in the last 10 records. Best score: 2.058. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_audio_video_baseline/checkpoints/epoch=30-val/loss=2.0583-v1.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_audio_video_baseline/checkpoints/epoch=30-val/loss=2.0583-v1.ckpt
+Error executing job with overrides: ['experiment.name=ravdess_audio_video_baseline', 'dataset.name=ravdess', 'dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset', 'dataset.modalities=[audio, video]', 'dataset.num_classes=8']
+Traceback (most recent call last):
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/train.py", line 534, in main
+    trainer.test(model, test_loader, ckpt_path=best_model_path)
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 737, in test
+    return call._call_and_handle_interrupt(
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 42, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 780, in _test_impl
+    results = self._run(model, ckpt_path=ckpt_path)
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 975, in _run
+    results = self._run_stage()
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1011, in _run_stage
+    return self._evaluation_loop.run()
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/utilities.py", line 177, in _decorator
+    return loop_run(self, *args, **kwargs)
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/evaluation_loop.py", line 122, in run
+    return self.on_run_end()
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/evaluation_loop.py", line 244, in on_run_end
+    self._on_evaluation_epoch_end()
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/evaluation_loop.py", line 326, in _on_evaluation_epoch_end
+    call._call_lightning_module_hook(trainer, hook_name)
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 140, in _call_lightning_module_hook
+    output = fn(*args, **kwargs)
+  File "/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/src/train.py", line 302, in on_test_epoch_end
+    cm = confusion_matrix(labels, preds, labels=np.arange(num_classes))
+NameError: name 'np' is not defined
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

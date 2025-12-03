@@ -93,7 +93,6 @@ uv run python src/train.py \
   dataset.name=ravdess \
   dataset.data_dir="$RAVDESS_DATA_ROOT" \
   dataset.modalities='[audio, video]' \
-  dataset.num_classes=8
-
+  dataset.num_classes=8 
 echo "Job completed at: $(date)"
 
