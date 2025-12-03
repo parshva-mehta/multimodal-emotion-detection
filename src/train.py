@@ -48,6 +48,7 @@ class MultimodalFusionModule(pl.LightningModule):
         # Build encoders for each modality
         self.encoders = nn.ModuleDict()
         modality_output_dims = {}
+        self.test_step_outputs = []  # <--- add this
 
         for modality in config.dataset.modalities:
             encoder_config = config.model.encoders.get(modality, {})
@@ -78,7 +79,18 @@ class MultimodalFusionModule(pl.LightningModule):
         # Metrics storage (if you want to aggregate manually later)
         self.train_metrics = []
         self.val_metrics = []
-
+        
+    def test_step(self, batch, batch_idx):
+        ...
+        out = {
+            "loss": loss,
+            "y": y,
+            "y_hat": y_hat,
+            # anything else you used in test_epoch_end
+        }
+        self.test_step_outputs.append(out)   # <--- accumulate
+        return out
+    
     def forward(self, features, mask=None):
         """
         Forward pass through encoders and fusion model.
@@ -245,7 +257,12 @@ class MultimodalFusionModule(pl.LightningModule):
         else:
             return optimizer
         
-    def test_epoch_end(self, outputs):
+    def on_test_epoch_end(self):
+        outputs = self.test_step_outputs   # list of dicts from test_step
+
+        # whatever you previously did in test_epoch_end
+        # e.g., stack tensors and compute metrics
+
         """
         Aggregate all test batches and compute + save confusion matrix.
         """
@@ -254,6 +271,9 @@ class MultimodalFusionModule(pl.LightningModule):
         labels = torch.cat([o["labels"] for o in outputs]).cpu().numpy()
 
         num_classes = int(self.config.dataset.get("num_classes", 8))
+        
+        all_y = torch.cat([o["y"] for o in outputs], dim=0)
+        all_y_hat = torch.cat([o["y_hat"] for o in outputs], dim=0)
 
         # Compute confusion matrix
         cm = confusion_matrix(labels, preds, labels=np.arange(num_classes))
@@ -314,6 +334,12 @@ class MultimodalFusionModule(pl.LightningModule):
         fig.savefig(fig_path, dpi=200)
         plt.close(fig)
         print(f"Saved confusion matrix figure to {fig_path}")
+
+        # compute metrics, log them, etc.
+        # self.log("test_acc", acc, prog_bar=True)
+
+        # IMPORTANT: clear the buffer so it doesn’t leak across runs
+        self.test_step_outputs.clear()
 
 
 def _collect_logits_labels(model, dataloader, device: str):

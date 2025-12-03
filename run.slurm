@@ -97,7 +97,3 @@ uv run python src/train.py \
 
 echo "Job completed at: $(date)"
 
-# Optionally list some outputs
-echo "Outputs:"
-ls -la checkpoints/ 2>/dev/null || true
-ls -la outputs/ 2>/dev/null || true
