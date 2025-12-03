@@ -1,0 +1,89 @@
++ PROJECT_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection
++ DEBUG_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/debugs
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/debugs
++ module purge
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module use /projects/community/modulefiles
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module load gcc/10.2.0/openmpi
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module load cuda/12.1
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ cd /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection
++ '[' '!' -d .venv ']'
++ source .venv/bin/activate
+++ '[' -z '' ']'
+++ '[' -n x ']'
+++ SCRIPT_PATH=.venv/bin/activate
+++ '[' .venv/bin/activate = /var/lib/slurm/slurmd/job48602305/slurm_script ']'
+++ deactivate nondestructive
+++ unset -f pydoc
+++ '[' -z '' ']'
+++ '[' -z '' ']'
+++ hash -r
+++ '[' -z '' ']'
+++ unset VIRTUAL_ENV
+++ unset VIRTUAL_ENV_PROMPT
+++ '[' '!' nondestructive = nondestructive ']'
+++ VIRTUAL_ENV=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv
+++ '[' linux-gnu = cygwin ']'
+++ '[' linux-gnu = msys ']'
+++ export VIRTUAL_ENV
+++ '[' -z '' ']'
+++ unset SCRIPT_PATH
+++ _OLD_VIRTUAL_PATH=/opt/sw/packages/cuda/12.1.0/bin:/projects/community/gcc/10.2.0/openmpi/4.0.5/bz186/bin:/projects/community/gcc/10.2.0/bz186/bin:/home/pbm52/.local/bin:/projects/community/anaconda/2020.07/gc563/bin:/usr/lpp/mmfs/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/pbm52/bin
+++ PATH=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/bin:/opt/sw/packages/cuda/12.1.0/bin:/projects/community/gcc/10.2.0/openmpi/4.0.5/bz186/bin:/projects/community/gcc/10.2.0/bz186/bin:/home/pbm52/.local/bin:/projects/community/anaconda/2020.07/gc563/bin:/usr/lpp/mmfs/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/pbm52/bin
+++ export PATH
+++ '[' xmultimodal-emotion-detection '!=' x ']'
+++ VIRTUAL_ENV_PROMPT=multimodal-emotion-detection
+++ export VIRTUAL_ENV_PROMPT
+++ '[' -z '' ']'
+++ '[' -z '' ']'
+++ _OLD_VIRTUAL_PS1=
+++ PS1='(multimodal-emotion-detection) '
+++ export PS1
+++ alias pydoc
+++ true
+++ hash -r
++ echo 'Syncing environment with uv...'
++ uv sync
+Resolved 157 packages in 2ms
+Audited 148 packages in 13ms
+++ uv run python -c 'import certifi; print(certifi.where())'
++ export SSL_CERT_FILE=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/certifi/cacert.pem
++ SSL_CERT_FILE=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/certifi/cacert.pem
++ export RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-dataset
++ RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-dataset
+/var/lib/slurm/slurmd/job48602305/slurm_script: line 59: PYTHONPATH: unbound variable

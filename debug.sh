@@ -56,7 +56,7 @@ export SSL_CERT_FILE=$(uv run python -c "import certifi; print(certifi.where())"
 # 4) Env vars
 # -----------------------------------------------------------------------------
 export RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-dataset
-export PYTHONPATH=$PYTHONPATH:src
+export PYTHONPATH="${PYTHONPATH:-}:src"
 export CUDA_VISIBLE_DEVICES=0
 
 echo "Job ID:      $SLURM_JOB_ID"
@@ -73,9 +73,15 @@ nvidia-smi
 # -----------------------------------------------------------------------------
 echo "Starting debug run..."
 uv run python src/debug.py \
-  experiment.name=ravdess_debug \
+  experiment.name=ravdess_debug_nodrop \
   dataset.name=ravdess \
   dataset.data_dir="${RAVDESS_DATA_ROOT}" \
-  dataset.modalities='[audio, video]'
+  dataset.modalities='[audio, video]' \
+  model.dropout=0.0 \
+  model.encoders.audio.dropout=0.0 \
+  model.encoders.video.dropout=0.0 \
+  training.augmentation.modality_dropout=0.0 \
+  training.learning_rate=0.01
+
 
 echo "Debug job completed at: $(date)"

@@ -1,0 +1,107 @@
++ PROJECT_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection
++ DEBUG_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/debugs
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/debugs
++ module purge
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module use /projects/community/modulefiles
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module load gcc/10.2.0/openmpi
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module load cuda/12.1
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ cd /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection
++ '[' '!' -d .venv ']'
++ source .venv/bin/activate
+++ '[' -z '' ']'
+++ '[' -n x ']'
+++ SCRIPT_PATH=.venv/bin/activate
+++ '[' .venv/bin/activate = /var/lib/slurm/slurmd/job48602498/slurm_script ']'
+++ deactivate nondestructive
+++ unset -f pydoc
+++ '[' -z '' ']'
+++ '[' -z '' ']'
+++ hash -r
+++ '[' -z '' ']'
+++ unset VIRTUAL_ENV
+++ unset VIRTUAL_ENV_PROMPT
+++ '[' '!' nondestructive = nondestructive ']'
+++ VIRTUAL_ENV=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv
+++ '[' linux-gnu = cygwin ']'
+++ '[' linux-gnu = msys ']'
+++ export VIRTUAL_ENV
+++ '[' -z '' ']'
+++ unset SCRIPT_PATH
+++ _OLD_VIRTUAL_PATH=/opt/sw/packages/cuda/12.1.0/bin:/projects/community/gcc/10.2.0/openmpi/4.0.5/bz186/bin:/projects/community/gcc/10.2.0/bz186/bin:/home/pbm52/.local/bin:/projects/community/anaconda/2020.07/gc563/bin:/usr/lpp/mmfs/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/pbm52/bin
+++ PATH=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/bin:/opt/sw/packages/cuda/12.1.0/bin:/projects/community/gcc/10.2.0/openmpi/4.0.5/bz186/bin:/projects/community/gcc/10.2.0/bz186/bin:/home/pbm52/.local/bin:/projects/community/anaconda/2020.07/gc563/bin:/usr/lpp/mmfs/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/pbm52/bin
+++ export PATH
+++ '[' xmultimodal-emotion-detection '!=' x ']'
+++ VIRTUAL_ENV_PROMPT=multimodal-emotion-detection
+++ export VIRTUAL_ENV_PROMPT
+++ '[' -z '' ']'
+++ '[' -z '' ']'
+++ _OLD_VIRTUAL_PS1=
+++ PS1='(multimodal-emotion-detection) '
+++ export PS1
+++ alias pydoc
+++ true
+++ hash -r
++ echo 'Syncing environment with uv...'
++ uv sync
+Resolved 157 packages in 1ms
+Audited 148 packages in 167ms
+++ uv run python -c 'import certifi; print(certifi.where())'
++ export SSL_CERT_FILE=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/certifi/cacert.pem
++ SSL_CERT_FILE=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/certifi/cacert.pem
++ export RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-dataset
++ RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-dataset
++ export PYTHONPATH=:src
++ PYTHONPATH=:src
++ export CUDA_VISIBLE_DEVICES=0
++ CUDA_VISIBLE_DEVICES=0
++ echo 'Job ID:      48602498'
++ echo 'Job Name:    ravdess-debug'
++ echo 'Node:        gpu017'
++ echo 'GPU:         0'
+++ pwd
++ echo 'Working Dir: /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection'
++ echo 'RAVDESS Root:/scratch/pbm52/emotion-detection-mm/multimodal-dataset'
++ nvidia-smi
++ echo 'Starting debug run...'
++ uv run python src/debug.py experiment.name=ravdess_debug_nodrop dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' model.dropout=0.0 model.encoders.audio.dropout=0.0 model.encoders.video.dropout=0.0 training.augmentation.modality_dropout=0.0 training.learning_rate=0.01
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+++ date
++ echo 'Debug job completed at: Wed Dec  3 18:53:49 EST 2025'
