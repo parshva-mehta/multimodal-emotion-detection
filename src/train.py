@@ -21,8 +21,6 @@ from pathlib import Path
 import json
 import shutil
 from sklearn.metrics import confusion_matrix
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 from data import create_dataloaders
@@ -35,8 +33,7 @@ class MultimodalFusionModule(pl.LightningModule):
     """
     PyTorch Lightning module for multimodal fusion training.
 
-    Handles training loop, validation, logging, confusion matrix, and
-    train/val loss curve plotting.
+    Handles training loop, validation, and logging.
     """
 
     def __init__(self, config: DictConfig):
@@ -48,20 +45,11 @@ class MultimodalFusionModule(pl.LightningModule):
         self.save_hyperparameters()
         self.config = config
 
-        # Encoders
+        # Build encoders for each modality
         self.encoders = nn.ModuleDict()
         modality_output_dims = {}
+        self.test_step_outputs = []  # <--- add this
 
-        # Buffers for test aggregation
-        self.test_step_outputs = []
-
-        # Buffers for loss curves
-        self._train_losses_epoch = []
-        self._val_losses_epoch = []
-        self.train_loss_history = []
-        self.val_loss_history = []
-
-        # Build encoders for each modality
         for modality in config.dataset.modalities:
             encoder_config = config.model.encoders.get(modality, {})
             input_dim = encoder_config.get("input_dim", 64)
@@ -88,9 +76,23 @@ class MultimodalFusionModule(pl.LightningModule):
         # Loss function
         self.criterion = nn.CrossEntropyLoss()
 
-    # ------------------------------------------------------------------
-    # Forward
-    # ------------------------------------------------------------------
+        # Metrics storage (if you want to aggregate manually later)
+        self.train_metrics = []
+        self.val_metrics = []
+        
+    def test_step(self, batch, batch_idx):
+        ...
+        out = {
+            "loss": loss,
+            "y": y,
+            "y_hat": y_hat,
+            "preds": preds,
+            "labels": labels
+            # anything else you used in test_epoch_end
+        }
+        self.test_step_outputs.append(out)   # <--- accumulate
+        return out
+    
     def forward(self, features, mask=None):
         """
         Forward pass through encoders and fusion model.
@@ -102,11 +104,13 @@ class MultimodalFusionModule(pl.LightningModule):
         Returns:
             logits: Class predictions
         """
+        # Encode each modality
         encoded_features = {}
         for modality, encoder in self.encoders.items():
             if modality in features:
                 encoded_features[modality] = encoder(features[modality])
 
+        # Fusion
         output = self.fusion_model(encoded_features, mask)
 
         # Handle different fusion output formats
@@ -117,25 +121,27 @@ class MultimodalFusionModule(pl.LightningModule):
 
         return logits
 
-    # ------------------------------------------------------------------
-    # Training / validation / test steps
-    # ------------------------------------------------------------------
     def training_step(self, batch, batch_idx):
         """Training step for one batch."""
         features, labels, mask = batch
 
+        # Forward pass
         logits = self(features, mask)
+
+        # Compute loss
         loss = self.criterion(logits, labels)
 
+        # Compute accuracy
         preds = torch.argmax(logits, dim=1)
         acc = (preds == labels).float().mean()
 
+        # Optionally log confidences during training
         probs = F.softmax(logits, dim=1)
         confidences, _ = torch.max(probs, dim=1)
 
-        # Lightning logging
-        self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=True)
-        self.log("train/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
+        # Log metrics
+        self.log("train/loss", loss, on_step=True, on_epoch=True, prog_bar=True)
+        self.log("train/acc", acc, on_step=True, on_epoch=True, prog_bar=True)
         self.log(
             "train/confidence_mean",
             confidences.mean(),
@@ -143,25 +149,28 @@ class MultimodalFusionModule(pl.LightningModule):
             on_epoch=True,
         )
 
-        # For manual loss curve
-        self._train_losses_epoch.append(loss.detach())
-
         return loss
 
     def validation_step(self, batch, batch_idx):
         """Validation step for one batch."""
         features, labels, mask = batch
 
+        # Forward pass
         logits = self(features, mask)
+
+        # Compute loss
         loss = self.criterion(logits, labels)
 
+        # Compute metrics
         preds = torch.argmax(logits, dim=1)
         acc = (preds == labels).float().mean()
 
+        # Get confidence & entropy for calibration-ish monitoring
         probs = F.softmax(logits, dim=1)
         confidences, _ = torch.max(probs, dim=1)
         entropy = -(probs * probs.clamp_min(1e-12).log()).sum(dim=1).mean()
 
+        # Log metrics
         self.log("val/loss", loss, on_epoch=True, prog_bar=True)
         self.log("val/acc", acc, on_epoch=True, prog_bar=True)
         self.log(
@@ -171,9 +180,6 @@ class MultimodalFusionModule(pl.LightningModule):
             prog_bar=False,
         )
         self.log("val/entropy", entropy, on_epoch=True, prog_bar=False)
-
-        # For manual loss curve
-        self._val_losses_epoch.append(loss.detach())
 
         return {
             "val_loss": loss,
@@ -187,40 +193,27 @@ class MultimodalFusionModule(pl.LightningModule):
         """Test step for one batch."""
         features, labels, mask = batch
 
+        # Forward pass
         logits = self(features, mask)
-        loss = self.criterion(logits, labels)
 
+        # Compute metrics
         preds = torch.argmax(logits, dim=1)
         acc = (preds == labels).float().mean()
 
         probs = F.softmax(logits, dim=1)
         confidences, _ = torch.max(probs, dim=1)
 
-        self.log("test/loss", loss, on_epoch=True)
         self.log("test/acc", acc, on_epoch=True)
 
-        # store for on_test_epoch_end aggregation
-        self.test_step_outputs.append(
-            {
-                "loss": loss.detach(),
-                "preds": preds.detach(),
-                "labels": labels.detach(),
-                "confidences": confidences.detach(),
-            }
-        )
-
         return {
-            "loss": loss,
             "preds": preds,
             "labels": labels,
             "confidences": confidences,
         }
 
-    # ------------------------------------------------------------------
-    # Optimizers
-    # ------------------------------------------------------------------
     def configure_optimizers(self):
         """Configure optimizer and learning rate scheduler."""
+        # Optimizer
         if self.config.training.optimizer == "adamw":
             optimizer = torch.optim.AdamW(
                 self.parameters(),
@@ -236,6 +229,7 @@ class MultimodalFusionModule(pl.LightningModule):
         else:
             raise ValueError(f"Unknown optimizer: {self.config.training.optimizer}")
 
+        # Learning rate scheduler
         if self.config.training.scheduler == "cosine":
             scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
                 optimizer,
@@ -264,68 +258,30 @@ class MultimodalFusionModule(pl.LightningModule):
             }
         else:
             return optimizer
-
-    # ------------------------------------------------------------------
-    # Epoch-end hooks for loss curves
-    # ------------------------------------------------------------------
-    def on_train_epoch_end(self):
-        if self._train_losses_epoch:
-            epoch_mean = torch.stack(self._train_losses_epoch).mean().item()
-            self.train_loss_history.append(epoch_mean)
-            self._train_losses_epoch.clear()
-            print(f"[Epoch {self.current_epoch}] train_loss={epoch_mean:.4f}")
-
-    def on_validation_epoch_end(self):
-        if self._val_losses_epoch:
-            epoch_mean = torch.stack(self._val_losses_epoch).mean().item()
-            self.val_loss_history.append(epoch_mean)
-            self._val_losses_epoch.clear()
-            print(f"[Epoch {self.current_epoch}] val_loss={epoch_mean:.4f}")
-
-    def on_fit_end(self):
-        """Called once after training finishes: save train/val loss curve."""
-        if not self.train_loss_history:
-            print("on_fit_end: no training loss history collected, skipping loss plot.")
-            return
-
-        epochs = range(1, len(self.train_loss_history) + 1)
-
-        fig, ax = plt.subplots()
-        ax.plot(epochs, self.train_loss_history, label="Train loss")
-
-        if self.val_loss_history:
-            ax.plot(epochs, self.val_loss_history, label="Val loss")
-
-        ax.set_xlabel("Epoch")
-        ax.set_ylabel("Loss")
-        ax.set_title("Training / Validation Loss")
-        ax.legend()
-        fig.tight_layout()
-
-        save_root = Path(self.config.experiment.save_dir) / self.config.experiment.name
-        save_root.mkdir(parents=True, exist_ok=True)
-
-        out_path = save_root / "loss_curve.png"
-        fig.savefig(out_path, dpi=200, bbox_inches="tight")
-        plt.close(fig)
-
-        print(f"Saved loss curve to {out_path}")
-
-    # ------------------------------------------------------------------
-    # Test epoch end: confusion matrix + test acc
-    # ------------------------------------------------------------------
+        
     def on_test_epoch_end(self):
         """
         Aggregate all test batches, compute + save confusion matrix, and
-        log a simple test accuracy from the aggregated preds/labels.
-        """
-        outputs = self.test_step_outputs
+        (optionally) log metrics.
 
+        Expects self.test_step_outputs to be a list of dicts, each with at least:
+        - "preds": predicted class indices (tensor, shape [B])
+        - "labels": true class indices (tensor, shape [B])
+        Optionally:
+        - "y":      true labels (same as "labels")
+        - "y_hat":  logits or probabilities
+        """
+
+        outputs = self.test_step_outputs  # list of dicts from test_step
+
+        # ------------------------------------------------------------------
         # 0) Safety guard: no test batches
+        # ------------------------------------------------------------------
         if not outputs:
             print("on_test_epoch_end: no test outputs collected, skipping aggregation.")
             return
 
+        # Helper to stack a given key if present
         def _stack_from_outputs(key):
             tensors = [o[key] for o in outputs if key in o]
             if not tensors:
@@ -336,40 +292,53 @@ class MultimodalFusionModule(pl.LightningModule):
         labels_t = _stack_from_outputs("labels")
 
         if preds_t is None or labels_t is None:
-            print(
-                "on_test_epoch_end: missing 'preds' or 'labels' in test_step_outputs; "
-                "skipping confusion matrix."
-            )
+            print("on_test_epoch_end: missing 'preds' or 'labels' in test_step_outputs; "
+                "skipping confusion matrix.")
             self.test_step_outputs.clear()
             return
 
+        # Detach and move to CPU for numpy / sklearn
         preds = preds_t.detach().cpu().numpy()
         labels = labels_t.detach().cpu().numpy()
 
-        # 1) num_classes from config
+        # Optional: keep y / y_hat if you actually use them somewhere else
+        y_t = _stack_from_outputs("y")
+        y_hat_t = _stack_from_outputs("y_hat")
+
+        # ------------------------------------------------------------------
+        # 1) Infer num_classes from config, with a robust fallback
+        # ------------------------------------------------------------------
         num_classes = None
         try:
+            # OmegaConf containers usually support .get
             num_classes = self.config.dataset.get("num_classes", None)
         except Exception:
-            num_classes = getattr(
-                getattr(self.config, "dataset", {}), "num_classes", None
-            )
+            # Fallback to getattr
+            num_classes = getattr(getattr(self.config, "dataset", {}), "num_classes", None)
+
         if num_classes is None:
-            num_classes = 8
+            num_classes = 8  # hard fallback
         num_classes = int(num_classes)
 
-        # 2) Confusion matrix
+        # ------------------------------------------------------------------
+        # 2) Compute confusion matrix
+        # ------------------------------------------------------------------
         cm = confusion_matrix(labels, preds, labels=np.arange(num_classes))
 
-        # 3) Save directory
+        # ------------------------------------------------------------------
+        # 3) Prepare save directory
+        # ------------------------------------------------------------------
         save_root = Path(self.config.experiment.save_dir) / self.config.experiment.name
         save_root.mkdir(parents=True, exist_ok=True)
 
+        # Save raw matrix as .npy
         cm_npy_path = save_root / "confusion_matrix.npy"
         np.save(cm_npy_path, cm)
         print(f"Saved confusion matrix to {cm_npy_path}")
 
-        # 4) Class names
+        # ------------------------------------------------------------------
+        # 4) Class names (RAVDESS or generic)
+        # ------------------------------------------------------------------
         dataset_name = getattr(self.config.dataset, "name", "")
 
         if dataset_name == "ravdess" and num_classes == 8:
@@ -386,7 +355,9 @@ class MultimodalFusionModule(pl.LightningModule):
         else:
             class_names = [f"C{i}" for i in range(num_classes)]
 
+        # ------------------------------------------------------------------
         # 5) Plot confusion matrix
+        # ------------------------------------------------------------------
         fig, ax = plt.subplots(figsize=(6, 6))
         im = ax.imshow(cm, interpolation="nearest", cmap="Blues")
         fig.colorbar(im, ax=ax)
@@ -402,6 +373,7 @@ class MultimodalFusionModule(pl.LightningModule):
         )
         plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
 
+        # Annotate each cell
         vmax = cm.max()
         thresh = vmax / 2.0 if vmax > 0 else 0.5
         for i in range(num_classes):
@@ -422,14 +394,274 @@ class MultimodalFusionModule(pl.LightningModule):
         plt.close(fig)
         print(f"Saved confusion matrix figure to {fig_path}")
 
-        # 6) Simple aggregated test accuracy
-        try:
-            acc = (preds == labels).mean().item()
-            self.log("test/acc_agg", acc, prog_bar=True, on_epoch=True, on_step=False)
-            print(f"Aggregated test accuracy (from confusion matrix): {acc:.4f}")
-        except Exception as e:
-            print(f"on_test_epoch_end: failed to compute/log accuracy: {e}")
+    # ------------------------------------------------------------------
+    # 6) Optional: simple accuracy metric
+    # ------------------------------------------------------------------
+    try:
+        acc = (preds == labels).mean().item()
+        # Lightning v2: on_epoch=True, on_step=False to log only once
+        self.log("test_acc", acc, prog_bar=True, on_epoch=True, on_step=False)
+        print(f"Test accuracy (from confusion matrix): {acc:.4f}")
+    except Exception as e:
+        print(f"on_test_epoch_end: failed to compute/log accuracy: {e}")
 
-        # 7) Clear buffer
-        self.test_step_outputs.clear()
+    # ------------------------------------------------------------------
+    # 7) Clear buffer so it doesn't leak across runs
+    # ------------------------------------------------------------------
+    self.test_step_outputs.clear()
+
+
+def _collect_logits_labels(model, dataloader, device: str):
+    """One full pass to collect logits and labels (works with dict+mask batches)."""
+    model.eval().to(device)
+    all_logits, all_labels = [], []
+    with torch.no_grad():
+        for batch in dataloader:
+            if len(batch) == 2:
+                inputs, labels = batch
+                mask = None
+            elif len(batch) == 3:
+                inputs, labels, mask = batch
+            else:
+                raise ValueError(f"Unexpected batch len={len(batch)}")
+
+            labels = labels.to(device)
+            if isinstance(inputs, dict):
+                inputs = {k: v.to(device) for k, v in inputs.items()}
+                mask = mask.to(device) if mask is not None else None
+                out = model(inputs, mask)
+            else:
+                out = model(inputs.to(device))
+
+            logits = out[0] if isinstance(out, (tuple, list)) else out
+            all_logits.append(logits.detach().cpu())
+            all_labels.append(labels.detach().cpu())
+
+    if not all_logits:
+        return torch.zeros(0, 1), torch.zeros(0, dtype=torch.long)
+    return torch.cat(all_logits, dim=0), torch.cat(all_labels, dim=0)
+
+
+def _per_bin_accuracy(
+    confs: torch.Tensor,
+    preds: torch.Tensor,
+    labels: torch.Tensor,
+    num_bins: int,
+):
+    """
+    Return bin EDGES (upper edges: 0.1..1.0 for 10 bins) and accuracy per bin (None if empty).
+    Matches your screenshot format.
+    """
+    edges = torch.linspace(0.0, 1.0, steps=num_bins + 1)
+    idx = torch.bucketize(confs.clamp(0, 1), edges, right=False) - 1
+    idx = idx.clamp(0, num_bins - 1)
+
+    bins_out = [round(float(edges[i + 1].item()), 2) for i in range(num_bins)]  # 0.1..1.0
+    acc_out = []
+    correct = (preds == labels)
+
+    for b in range(num_bins):
+        mask = idx == b
+        if mask.any():
+            acc_out.append(round(float(correct[mask].float().mean().item()), 4))
+        else:
+            acc_out.append(None)
+    return bins_out, acc_out
+
+
+@hydra.main(version_base=None, config_path="../configs", config_name="base")
+def main(config: DictConfig):
+    """
+    Main training function.
+
+    Args:
+        config: Hydra configuration
+    """
+    print("=" * 80)
+    print("Configuration:")
+    print(OmegaConf.to_yaml(config))
+    print("=" * 80)
+
+    # Set random seed for reproducibility
+    pl.seed_everything(config.seed)
+
+    # Create output directories
+    save_dir = Path(config.experiment.save_dir) / config.experiment.name
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    # Create dataloaders
+    print("\nCreating dataloaders...")
+    train_loader, val_loader, test_loader = create_dataloaders(
+        dataset_name=config.dataset.name,
+        data_dir=config.dataset.data_dir,
+        modalities=config.dataset.modalities,
+        batch_size=config.dataset.batch_size,
+        num_workers=config.dataset.num_workers,
+        modality_dropout=config.training.augmentation.modality_dropout,
+    )
+
+    print(f"Train batches: {len(train_loader)}")
+    print(f"Val batches: {len(val_loader)}")
+    print(f"Test batches: {len(test_loader)}")
+
+    # Create model
+    print("\nCreating model...")
+    model = MultimodalFusionModule(config)
+
+    # Count parameters
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"Total parameters: {total_params:,}")
+    print(f"Trainable parameters: {trainable_params:,}")
+
+    # Callbacks
+    checkpoint_callback = ModelCheckpoint(
+        dirpath=save_dir / "checkpoints",
+        filename="{epoch}-{val/loss:.4f}",
+        monitor="val/loss",
+        mode="min",
+        save_top_k=config.experiment.save_top_k,
+        save_last=True,
+    )
+
+    early_stopping = EarlyStopping(
+        monitor="val/loss",
+        patience=config.training.early_stopping_patience,
+        mode="min",
+        verbose=True,
+    )
+
+    lr_monitor = LearningRateMonitor(logging_interval="epoch")
+
+    # Loggers
+    tb_logger = TensorBoardLogger(
+        save_dir=save_dir,
+        name="tb_logs",
+    )
+    csv_logger = CSVLogger(
+        save_dir=save_dir,
+        name="csv_logs",  # metrics.csv under csv_logs/version_*/
+    )
+
+    # Trainer
+    trainer = pl.Trainer(
+        max_epochs=config.training.max_epochs,
+        accelerator="gpu",   # lets PL pick cpu/mps/cuda
+        devices=1,
+        logger=[tb_logger, csv_logger],
+        callbacks=[checkpoint_callback, early_stopping, lr_monitor],
+        log_every_n_steps=config.experiment.log_every_n_steps,
+        gradient_clip_val=config.training.gradient_clip_norm,
+        deterministic=True,
+        enable_progress_bar=True,
+    )
+
+    # Train
+    print("\nStarting training...")
+    trainer.fit(model, train_loader, val_loader)
+
+    def _is_uncertainty_fusion(cfg) -> bool:
+        ft = (cfg.model.fusion_type or "").lower()
+        return ft in {
+            "uncertainty",
+            "uwf",
+            "uncertainty_weighted",
+            "uncertainty_weighted_late",
+        }
+
+    print("\nTesting best model...")
+    best_model_path = checkpoint_callback.best_model_path
+    print(f"Loading best model from: {best_model_path}")
+    trainer.test(model, test_loader, ckpt_path=best_model_path)
+
+    if _is_uncertainty_fusion(config):
+        print("\nComputing calibration metrics (uncertainty fusion detected)...")
+        best_model = MultimodalFusionModule.load_from_checkpoint(
+            best_model_path,
+            config=config,
+            strict=False,
+        )
+        device_str = (
+            "cuda"
+            if torch.cuda.is_available()
+            else ("mps" if torch.backends.mps.is_available() else "cpu")
+        )
+
+        logits_all, labels_all = _collect_logits_labels(
+            best_model,
+            test_loader,
+            device=device_str,
+        )
+        if logits_all.numel() == 0:
+            print("No logits collected; skipping uncertainty.json.")
+        else:
+            nll = CalibrationMetrics.negative_log_likelihood(
+                logits_all,
+                labels_all,
+            )
+            probs_all = torch.softmax(logits_all, dim=1)
+            confs_all, preds_all = torch.max(probs_all, dim=1)
+            ece = CalibrationMetrics.expected_calibration_error(
+                confs_all,
+                preds_all,
+                labels_all,
+                num_bins=config.evaluation.get("num_calibration_bins", 15),
+            )
+
+            bins_list, acc_per_bin = _per_bin_accuracy(
+                confs_all,
+                preds_all,
+                labels_all,
+                num_bins=config.evaluation.get("num_calibration_bins", 15),
+            )
+
+            CalibrationMetrics.reliability_diagram(
+                confs_all.numpy(),
+                preds_all.numpy(),
+                labels_all.numpy(),
+                save_path="./analysis/calibration_diagram.png",
+            )
+            print("✓ Reliability diagram created")
+
+            experiments_dir = Path(
+                config.outputs.get("experiments_dir", "./experiments")
+            )
+            experiments_dir.mkdir(parents=True, exist_ok=True)
+            out_path = experiments_dir / "uncertainty.json"
+
+            out_obj = {
+                "dataset": str(config.dataset.name),
+                "calibration_metrics": {
+                    "ece": round(float(ece), 3),
+                    "nll": round(float(nll), 3),
+                    "bins": bins_list,
+                    "accuracy_per_bin": acc_per_bin,
+                },
+            }
+            with open(out_path, "w") as f:
+                json.dump(out_obj, f, indent=2)
+            print(f"Saved uncertainty report to: {out_path}")
+    else:
+        print("\nSkipping calibration metrics: fusion_type is not an uncertainty variant.")
+        # Save final results
+        results = {
+            "best_model_path": str(best_model_path),
+            "best_val_loss": float(checkpoint_callback.best_model_score),
+            "config": OmegaConf.to_container(config, resolve=True),
+        }
+        best_ckpt_target = save_dir / "best.ckpt"
+        if best_model_path and Path(best_model_path).exists():
+            shutil.copy(str(best_model_path), str(best_ckpt_target))
+            print(f"Copied best checkpoint to: {best_ckpt_target}")
+
+        results_file = save_dir / "results.json"
+        with open(results_file, "w") as f:
+            json.dump(results, f, indent=2)
+
+        print(f"\nTraining complete! Results saved to: {results_file}")
+        print(f"Best model: {best_model_path}")
+        print(f"Best validation loss: {checkpoint_callback.best_model_score:.4f}")
+
+
+if __name__ == "__main__":
     main()
