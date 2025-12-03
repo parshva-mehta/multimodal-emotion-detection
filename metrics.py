@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 run_dir = Path("outputs/ravdess_audio_video_baseline")
-metrics_path = run_dir / "csv_logs" / "version_0" / "metrics.csv"
+metrics_path = "/Users/parshvamehta/multimodal-emotion-detection/mutlimodal-variant/outputs/ravdess_audio_video_baseline/csv_logs/version_9/metrics.csv"
 
 df = pd.read_csv(metrics_path)
 
