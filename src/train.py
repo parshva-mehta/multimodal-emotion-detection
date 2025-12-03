@@ -81,15 +81,35 @@ class MultimodalFusionModule(pl.LightningModule):
         self.val_metrics = []
         
     def test_step(self, batch, batch_idx):
-        ...
-        out = {
-            "loss": loss,
-            "y": y,
-            "y_hat": y_hat,
-            # anything else you used in test_epoch_end
-        }
-        self.test_step_outputs.append(out)   # <--- accumulate
-        return out
+        """Test step for one batch."""
+        features, labels, mask = batch
+
+        # Forward pass
+        logits = self(features, mask)
+        loss = self.criterion(logits, labels)
+
+        # Compute metrics
+        preds = torch.argmax(logits, dim=1)
+        acc = (preds == labels).float().mean()
+
+        probs = F.softmax(logits, dim=1)
+        confidences, _ = torch.max(probs, dim=1)
+
+        # Log per-batch test metrics (Lightning will aggregate over epoch)
+        self.log("test/loss", loss, on_epoch=True)
+        self.log("test/acc", acc, on_epoch=True)
+
+        # Store for epoch-end aggregation (confusion matrix etc.)
+        self.test_step_outputs.append(
+            {
+                "loss": loss.detach(),
+                "preds": preds.detach(),
+                "labels": labels.detach(),
+                "confidences": confidences.detach(),
+            }
+        )
+        return loss
+
     
     def forward(self, features, mask=None):
         """
@@ -182,28 +202,6 @@ class MultimodalFusionModule(pl.LightningModule):
         return {
             "val_loss": loss,
             "val_acc": acc,
-            "preds": preds,
-            "labels": labels,
-            "confidences": confidences,
-        }
-
-    def test_step(self, batch, batch_idx):
-        """Test step for one batch."""
-        features, labels, mask = batch
-
-        # Forward pass
-        logits = self(features, mask)
-
-        # Compute metrics
-        preds = torch.argmax(logits, dim=1)
-        acc = (preds == labels).float().mean()
-
-        probs = F.softmax(logits, dim=1)
-        confidences, _ = torch.max(probs, dim=1)
-
-        self.log("test/acc", acc, on_epoch=True)
-
-        return {
             "preds": preds,
             "labels": labels,
             "confidences": confidences,
