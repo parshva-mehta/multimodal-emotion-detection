@@ -1,0 +1,5 @@
+lr-AdamW,step,val/loss,val/acc,val/confidence_mean,val/entropy,epoch,train/loss_epoch,train/acc_epoch,train/confidence_mean,test/loss,test/acc,test/acc_agg
+0.001,0,,,,,,,,,,,
+,35,2.0713424682617188,0.1388888955116272,0.16727794706821442,2.0250697135925293,0,,,,,,
+,35,,,,,0,2.127519369125366,0.1362847238779068,0.21892699599266052,,,
+,36,,,,,1,,,,2.082941770553589,0.1319444477558136,0.1319444477558136
