@@ -86,8 +86,6 @@ class MultimodalFusionModule(pl.LightningModule):
             "loss": loss,
             "y": y,
             "y_hat": y_hat,
-            "preds": preds,
-            "labels": labels
             # anything else you used in test_epoch_end
         }
         self.test_step_outputs.append(out)   # <--- accumulate
@@ -260,88 +258,34 @@ class MultimodalFusionModule(pl.LightningModule):
             return optimizer
         
     def on_test_epoch_end(self):
+        outputs = self.test_step_outputs   # list of dicts from test_step
+
+        # whatever you previously did in test_epoch_end
+        # e.g., stack tensors and compute metrics
+
         """
-        Aggregate all test batches, compute + save confusion matrix, and
-        (optionally) log metrics.
-
-        Expects self.test_step_outputs to be a list of dicts, each with at least:
-        - "preds": predicted class indices (tensor, shape [B])
-        - "labels": true class indices (tensor, shape [B])
-        Optionally:
-        - "y":      true labels (same as "labels")
-        - "y_hat":  logits or probabilities
+        Aggregate all test batches and compute + save confusion matrix.
         """
+        # Collect preds and labels
+        preds = torch.cat([o["preds"] for o in outputs]).cpu().numpy()
+        labels = torch.cat([o["labels"] for o in outputs]).cpu().numpy()
 
-        outputs = self.test_step_outputs  # list of dicts from test_step
+        num_classes = int(self.config.dataset.get("num_classes", 8))
+        
+        all_y = torch.cat([o["y"] for o in outputs], dim=0)
+        all_y_hat = torch.cat([o["y_hat"] for o in outputs], dim=0)
 
-        # ------------------------------------------------------------------
-        # 0) Safety guard: no test batches
-        # ------------------------------------------------------------------
-        if not outputs:
-            print("on_test_epoch_end: no test outputs collected, skipping aggregation.")
-            return
-
-        # Helper to stack a given key if present
-        def _stack_from_outputs(key):
-            tensors = [o[key] for o in outputs if key in o]
-            if not tensors:
-                return None
-            return torch.cat(tensors, dim=0)
-
-        preds_t = _stack_from_outputs("preds")
-        labels_t = _stack_from_outputs("labels")
-
-        if preds_t is None or labels_t is None:
-            print("on_test_epoch_end: missing 'preds' or 'labels' in test_step_outputs; "
-                "skipping confusion matrix.")
-            self.test_step_outputs.clear()
-            return
-
-        # Detach and move to CPU for numpy / sklearn
-        preds = preds_t.detach().cpu().numpy()
-        labels = labels_t.detach().cpu().numpy()
-
-        # Optional: keep y / y_hat if you actually use them somewhere else
-        y_t = _stack_from_outputs("y")
-        y_hat_t = _stack_from_outputs("y_hat")
-
-        # ------------------------------------------------------------------
-        # 1) Infer num_classes from config, with a robust fallback
-        # ------------------------------------------------------------------
-        num_classes = None
-        try:
-            # OmegaConf containers usually support .get
-            num_classes = self.config.dataset.get("num_classes", None)
-        except Exception:
-            # Fallback to getattr
-            num_classes = getattr(getattr(self.config, "dataset", {}), "num_classes", None)
-
-        if num_classes is None:
-            num_classes = 8  # hard fallback
-        num_classes = int(num_classes)
-
-        # ------------------------------------------------------------------
-        # 2) Compute confusion matrix
-        # ------------------------------------------------------------------
+        # Compute confusion matrix
         cm = confusion_matrix(labels, preds, labels=np.arange(num_classes))
 
-        # ------------------------------------------------------------------
-        # 3) Prepare save directory
-        # ------------------------------------------------------------------
+        # Save raw matrix as .npy
         save_root = Path(self.config.experiment.save_dir) / self.config.experiment.name
         save_root.mkdir(parents=True, exist_ok=True)
+        np.save(save_root / "confusion_matrix.npy", cm)
+        print(f"Saved confusion matrix to {save_root / 'confusion_matrix.npy'}")
 
-        # Save raw matrix as .npy
-        cm_npy_path = save_root / "confusion_matrix.npy"
-        np.save(cm_npy_path, cm)
-        print(f"Saved confusion matrix to {cm_npy_path}")
-
-        # ------------------------------------------------------------------
-        # 4) Class names (RAVDESS or generic)
-        # ------------------------------------------------------------------
-        dataset_name = getattr(self.config.dataset, "name", "")
-
-        if dataset_name == "ravdess" and num_classes == 8:
+        # Optional: human-readable emotion labels for RAVDESS
+        if getattr(self.config.dataset, "name", "") == "ravdess" and num_classes == 8:
             class_names = [
                 "neutral",
                 "calm",
@@ -355,9 +299,7 @@ class MultimodalFusionModule(pl.LightningModule):
         else:
             class_names = [f"C{i}" for i in range(num_classes)]
 
-        # ------------------------------------------------------------------
-        # 5) Plot confusion matrix
-        # ------------------------------------------------------------------
+        # Plot confusion matrix
         fig, ax = plt.subplots(figsize=(6, 6))
         im = ax.imshow(cm, interpolation="nearest", cmap="Blues")
         fig.colorbar(im, ax=ax)
@@ -374,8 +316,7 @@ class MultimodalFusionModule(pl.LightningModule):
         plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
 
         # Annotate each cell
-        vmax = cm.max()
-        thresh = vmax / 2.0 if vmax > 0 else 0.5
+        thresh = cm.max() / 2.0 if cm.max() > 0 else 0.5
         for i in range(num_classes):
             for j in range(num_classes):
                 ax.text(
@@ -394,21 +335,11 @@ class MultimodalFusionModule(pl.LightningModule):
         plt.close(fig)
         print(f"Saved confusion matrix figure to {fig_path}")
 
-    # ------------------------------------------------------------------
-    # 6) Optional: simple accuracy metric
-    # ------------------------------------------------------------------
-    try:
-        acc = (preds == labels).mean().item()
-        # Lightning v2: on_epoch=True, on_step=False to log only once
-        self.log("test_acc", acc, prog_bar=True, on_epoch=True, on_step=False)
-        print(f"Test accuracy (from confusion matrix): {acc:.4f}")
-    except Exception as e:
-        print(f"on_test_epoch_end: failed to compute/log accuracy: {e}")
+        # compute metrics, log them, etc.
+        # self.log("test_acc", acc, prog_bar=True)
 
-    # ------------------------------------------------------------------
-    # 7) Clear buffer so it doesn't leak across runs
-    # ------------------------------------------------------------------
-    self.test_step_outputs.clear()
+        # IMPORTANT: clear the buffer so it doesn’t leak across runs
+        self.test_step_outputs.clear()
 
 
 def _collect_logits_labels(model, dataloader, device: str):
