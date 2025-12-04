@@ -62,8 +62,7 @@ def inspect_label_distribution(loader, split_name: str):
 
 
 def overfit_one_batch(config: DictConfig, device: str, train_loader):
-    print("\n=== Overfit sanity test on 1 batch ===")
-    # Grab one batch
+    print("\n=== Overfit sanity test on 1 batch (head-only, strong LR, no reg) ===")
     try:
         batch = next(iter(train_loader))
     except StopIteration:
@@ -71,23 +70,37 @@ def overfit_one_batch(config: DictConfig, device: str, train_loader):
         return
 
     features, labels, mask = batch
-    features = {
-        k: v.to(device) for k, v in features.items()
-    }  # dict of modality -> tensor
+    print(f"[overfit] labels min={labels.min().item()}, max={labels.max().item()}")
+    print("[overfit] label histogram this batch:",
+          collections.Counter(labels.tolist()))
+
+    features = {k: v.to(device) for k, v in features.items()}
     labels = labels.to(device)
     mask = mask.to(device) if mask is not None else None
 
     # Fresh model
     model = MultimodalFusionModule(config).to(device)
-    model.train()
 
+    # --- freeze encoders, train only fusion head ---
+    for p in model.encoders.parameters():
+        p.requires_grad = False
+
+    # Make sure we're in train mode and zero dropout in fusion head for the test
+    model.train()
+    if hasattr(model, "fusion_head"):
+        # Turn off dropout modules inside fusion_head if any
+        for m in model.fusion_head.modules():
+            if isinstance(m, torch.nn.Dropout):
+                m.p = 0.0
+
+    # Overfit hyperparams: big LR, no weight decay
     optimizer = torch.optim.Adam(
-        model.parameters(),
-        lr=float(config.training.learning_rate),
-        weight_decay=float(config.training.weight_decay),
+        filter(lambda p: p.requires_grad, model.parameters()),
+        lr=1e-2,   # much larger than your usual 1e-3
+        weight_decay=0.0,
     )
 
-    max_epochs = 50
+    max_epochs = 200
     for epoch in range(max_epochs):
         optimizer.zero_grad()
         logits = model(features, mask)
@@ -98,17 +111,18 @@ def overfit_one_batch(config: DictConfig, device: str, train_loader):
         loss.backward()
         optimizer.step()
 
-        print(
-            f"[overfit] epoch {epoch:02d} | loss={loss.item():.4f} | acc={acc:.4f}"
-        )
+        if epoch % 5 == 0 or acc > 0.98:
+            print(
+                f"[overfit] epoch {epoch:03d} | loss={loss.item():.4f} | acc={acc:.4f}"
+            )
 
         if acc > 0.98:
-            print("✓ Overfit sanity test passed (acc > 0.98).")
+            print("✓ Overfit sanity test PASSED (acc > 0.98).")
             break
     else:
         print(
-            "⚠ Overfit sanity test did NOT reach high accuracy. "
-            "This suggests a bug in model / labels / loss."
+            "⚠ Overfit sanity test did NOT reach high accuracy even with head-only, "
+            "big LR, and no regularization."
         )
 
 
