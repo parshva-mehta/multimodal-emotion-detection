@@ -66,15 +66,23 @@ class MultimodalFusionModule(pl.LightningModule):
             modality_output_dims[modality] = output_dim
 
         # Build fusion model
-        self.fusion_model = build_fusion_model(
-            fusion_type=config.model.fusion_type,
-            modality_dims=modality_output_dims,
-            num_classes=config.dataset.get("num_classes", 11),
-            hidden_dim=config.model.hidden_dim,
-            num_heads=config.model.get("num_heads", 4),
-            dropout=config.model.dropout,
-        )
+        # self.fusion_model = build_fusion_model(
+        #     fusion_type=config.model.fusion_type,
+        #     modality_dims=modality_output_dims,
+        #     num_classes=config.dataset.get("num_classes", 11),
+        #     hidden_dim=config.model.hidden_dim,
+        #     num_heads=config.model.get("num_heads", 4),
+        #     dropout=config.model.dropout,
+        # )
 
+        num_classes = int(config.dataset.get("num_classes", 8))
+        fusion_in_dim = sum(modality_output_dims.values())  # e.g., 128 (audio) + 128 (video) = 256
+
+        self.fusion_head = nn.Sequential(
+            nn.Linear(fusion_in_dim, config.model.hidden_dim),
+            nn.ReLU(),
+            nn.Linear(config.model.hidden_dim, num_classes),
+        )
         # Loss function
         self.criterion = nn.CrossEntropyLoss()
 
@@ -127,15 +135,32 @@ class MultimodalFusionModule(pl.LightningModule):
             if modality in features:
                 encoded_features[modality] = encoder(features[modality])
 
-        # Fusion
-        output = self.fusion_model(encoded_features, mask)
+        # # Fusion
+        # output = self.fusion_model(encoded_features, mask)
 
-        # Handle different fusion output formats
-        if isinstance(output, tuple):
-            logits = output[0]  # Late fusion returns (fused_logits, per_modality_logits)
-        else:
-            logits = output
+        # # Handle different fusion output formats
+        # if isinstance(output, tuple):
+        #     logits = output[0]  # Late fusion returns (fused_logits, per_modality_logits)
+        # else:
+        #     logits = output
 
+        # return logits
+        
+        # ------------------------------------------------------------------
+        # Simple fusion: concatenate modality embeddings and classify
+        # ------------------------------------------------------------------
+        # Ensure we have a consistent order of modalities
+        encoded_list = []
+        for modality in self.config.dataset.modalities:
+            if modality in encoded_features:
+                encoded_list.append(encoded_features[modality])
+
+        if not encoded_list:
+            raise RuntimeError("No modalities were encoded; encoded_features is empty.")
+
+        fused = torch.cat(encoded_list, dim=-1)  # (B, sum(modality_output_dims))
+
+        logits = self.fusion_head(fused)
         return logits
 
     def training_step(self, batch, batch_idx):
