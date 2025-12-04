@@ -96,16 +96,16 @@ nvidia-smi
 #   dataset.num_classes=8 
 # echo "Job completed at: $(date)"
 
-echo "Starting RAVDESS multimodal training..."
 uv run python src/train.py \
-  experiment.name=ravdess_audio_video_big \
+  experiment.name=ravdess_audio_video_big_fixed \
   dataset.name=ravdess \
   dataset.data_dir="$RAVDESS_DATA_ROOT" \
   dataset.modalities='[audio, video]' \
   dataset.num_classes=8 \
-  model.output_dim=256 \
   model.hidden_dim=512 \
+  model.output_dim=256 \
   model.dropout=0.1 \
+  model.encoders.audio.encoder_type=lstm \
   model.encoders.audio.hidden_dim=512 \
   model.encoders.audio.output_dim=256 \
   model.encoders.audio.num_layers=3 \
@@ -113,9 +113,13 @@ uv run python src/train.py \
   model.encoders.video.hidden_dim=512 \
   model.encoders.video.output_dim=256 \
   model.encoders.video.dropout=0.1 \
+  training.learning_rate=0.002 \
+  training.weight_decay=0.0 \
   training.max_epochs=80 \
   training.early_stopping_patience=15 \
-  training.learning_rate=0.0005 \
+  training.scheduler=warmup_cosine \
+  training.warmup_steps=200 \
+  training.gradient_clip_norm=1.0 \
   training.augmentation.modality_dropout=0.0
-echo "Job completed at: $(date)"
 
+echo "Job completed at: $(date)"
