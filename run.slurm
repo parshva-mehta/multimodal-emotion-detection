@@ -87,12 +87,30 @@ nvidia-smi
 # -------------------------
 # 7) Run training (via uv)
 # -------------------------
+# echo "Starting RAVDESS multimodal training..."
+# uv run python src/train.py \
+#   experiment.name=ravdess_audio_video_baseline \
+#   dataset.name=ravdess \
+#   dataset.data_dir="$RAVDESS_DATA_ROOT" \
+#   dataset.modalities='[audio, video]' \
+#   dataset.num_classes=8 
+# echo "Job completed at: $(date)"
+
 echo "Starting RAVDESS multimodal training..."
 uv run python src/train.py \
   experiment.name=ravdess_audio_video_baseline \
   dataset.name=ravdess \
   dataset.data_dir="$RAVDESS_DATA_ROOT" \
   dataset.modalities='[audio, video]' \
-  dataset.num_classes=8 
-echo "Job completed at: $(date)"
+  dataset.num_classes=8 \
+  \
+  model.dropout=0.1 \
+  model.encoders.audio.dropout=0.1 \
+  model.encoders.video.dropout=0.1 \
+  \
+  training.max_epochs=80 \
+  training.early_stopping_patience=15 \
+  training.learning_rate=0.001 \
+  training.augmentation.modality_dropout=0.0
 
+echo "Job completed at: $(date)"
