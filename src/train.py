@@ -182,8 +182,8 @@ class MultimodalFusionModule(pl.LightningModule):
         confidences, _ = torch.max(probs, dim=1)
 
         # Log metrics
-        self.log("train/loss", loss, on_step=True, on_epoch=True, prog_bar=True)
-        self.log("train/acc", acc, on_step=True, on_epoch=True, prog_bar=True)
+        self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("train/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
         self.log(
             "train/confidence_mean",
             confidences.mean(),
