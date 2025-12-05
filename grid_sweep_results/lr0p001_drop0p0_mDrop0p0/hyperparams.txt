@@ -1,0 +1,11 @@
+experiment.name = ravdess_sweep_lr0p001_drop0p0_mDrop0p0
+learning_rate   = 0.001
+model.dropout   = 0.0
+modality_dropout= 0.0
+model.output_dim= 256
+model.hidden_dim= 512
+audio.hidden_dim= 512
+audio.output_dim= 256
+audio.num_layers= 3
+video.hidden_dim= 512
+video.output_dim= 256

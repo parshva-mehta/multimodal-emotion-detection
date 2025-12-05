@@ -1,0 +1,11 @@
+Resolved 157 packages in 186ms
+Audited 148 packages in 938ms
+/scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+Could not override 'training.warmup_steps'.
+To append to your config use +training.warmup_steps=200
+Key 'warmup_steps' is not in struct
+    full_key: training.warmup_steps
+    object_type=dict
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

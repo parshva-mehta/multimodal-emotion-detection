@@ -1,0 +1,1084 @@
++ PROJECT_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection
++ GRID_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/slurm
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results
++ LRS=(0.0005 0.001 0.002)
++ MODEL_DROPS=(0.0 0.1)
++ MODALITY_DROPS=(0.0 0.05)
++ module purge
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module use /projects/community/modulefiles
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module load gcc/10.2.0/openmpi
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ module load cuda/12.1
++ '[' -z '' ']'
++ case "$-" in
++ __lmod_sh_dbg=x
++ '[' -n x ']'
++ set +x
+Shell debugging temporarily silenced: export LMOD_SH_DBG_ON=1 for Lmod's output
+Shell debugging restarted
++ unset __lmod_sh_dbg
++ return 0
++ cd /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection
++ '[' '!' -d .venv ']'
++ source .venv/bin/activate
+++ '[' -z '' ']'
+++ '[' -n x ']'
+++ SCRIPT_PATH=.venv/bin/activate
+++ '[' .venv/bin/activate = /var/lib/slurm/slurmd/job48617922/slurm_script ']'
+++ deactivate nondestructive
+++ unset -f pydoc
+++ '[' -z '' ']'
+++ '[' -z '' ']'
+++ hash -r
+++ '[' -z '' ']'
+++ unset VIRTUAL_ENV
+++ unset VIRTUAL_ENV_PROMPT
+++ '[' '!' nondestructive = nondestructive ']'
+++ VIRTUAL_ENV=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv
+++ '[' linux-gnu = cygwin ']'
+++ '[' linux-gnu = msys ']'
+++ export VIRTUAL_ENV
+++ '[' -z '' ']'
+++ unset SCRIPT_PATH
+++ _OLD_VIRTUAL_PATH=/opt/sw/packages/cuda/12.1.0/bin:/projects/community/gcc/10.2.0/openmpi/4.0.5/bz186/bin:/projects/community/gcc/10.2.0/bz186/bin:/home/pbm52/.local/bin:/projects/community/anaconda/2020.07/gc563/bin:/usr/lpp/mmfs/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/pbm52/bin
+++ PATH=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/bin:/opt/sw/packages/cuda/12.1.0/bin:/projects/community/gcc/10.2.0/openmpi/4.0.5/bz186/bin:/projects/community/gcc/10.2.0/bz186/bin:/home/pbm52/.local/bin:/projects/community/anaconda/2020.07/gc563/bin:/usr/lpp/mmfs/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/pbm52/bin
+++ export PATH
+++ '[' xmultimodal-emotion-detection '!=' x ']'
+++ VIRTUAL_ENV_PROMPT=multimodal-emotion-detection
+++ export VIRTUAL_ENV_PROMPT
+++ '[' -z '' ']'
+++ '[' -z '' ']'
+++ _OLD_VIRTUAL_PS1=
+++ PS1='(multimodal-emotion-detection) '
+++ export PS1
+++ alias pydoc
+++ true
+++ hash -r
++ echo 'Syncing environment with uv...'
++ uv sync
+Resolved 157 packages in 4ms
+Uninstalled 1 package in 101ms
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 1 package in 286ms
+ - multimodal-emotion-detection==0.1.0 (from file:///scache/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection)
+ + multimodal-emotion-detection==0.1.0 (from file:///scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection)
+++ uv run python -c 'import certifi; print(certifi.where())'
++ export SSL_CERT_FILE=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/certifi/cacert.pem
++ SSL_CERT_FILE=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/certifi/cacert.pem
++ export RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-dataset
++ RAVDESS_DATA_ROOT=/scratch/pbm52/emotion-detection-mm/multimodal-dataset
++ export PYTHONPATH=:src
++ PYTHONPATH=:src
++ export CUDA_VISIBLE_DEVICES=0
++ CUDA_VISIBLE_DEVICES=0
++ echo 'Job ID:          48617922'
++ echo 'Node:            gpu023'
++ echo 'GPU:             0'
+++ pwd
++ echo 'Working Dir:     /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection'
++ echo 'RAVDESS Root:    /scratch/pbm52/emotion-detection-mm/multimodal-dataset'
++ nvidia-smi
++ for LR in '"${LRS[@]}"'
++ for MDROP in '"${MODALITY_DROPS[@]}"'
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p0005
++ MD_TAG=0p0
++ MMD_TAG=0p0
++ TAG=lr0p0005_drop0p0_mDrop0p0
++ EXP_NAME=ravdess_sweep_lr0p0005_drop0p0_mDrop0p0
++ echo ============================================================
++ echo 'Starting sweep run: lr0p0005_drop0p0_mDrop0p0'
++ echo '  LR               = 0.0005'
++ echo '  model.dropout    = 0.0'
++ echo '  modality_dropout = 0.0'
++ echo '  experiment.name  = ravdess_sweep_lr0p0005_drop0p0_mDrop0p0'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p0005_drop0p0_mDrop0p0 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.0 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.0005 training.augmentation.modality_dropout=0.0
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p0005 ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p0005 ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.082
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 2.071
+Metric val/loss improved by 0.004 >= min_delta = 0.0. New best score: 2.068
+Metric val/loss improved by 0.006 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.054
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.053
+Metric val/loss improved by 0.012 >= min_delta = 0.0. New best score: 2.041
+Metric val/loss improved by 0.026 >= min_delta = 0.0. New best score: 2.015
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 2.000
+Metric val/loss improved by 0.003 >= min_delta = 0.0. New best score: 1.997
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 1.983
+Metric val/loss improved by 0.005 >= min_delta = 0.0. New best score: 1.977
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 1.968
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 1.953
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 1.943
+Monitored metric val/loss did not improve in the last 15 records. Best score: 1.943. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/checkpoints/epoch=49-val/loss=1.9429.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/checkpoints/epoch=49-val/loss=1.9429.ckpt
++ echo 'Finished training for lr0p0005_drop0p0_mDrop0p0'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p0
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p0
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p0/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p0/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p0/metrics.csv
++ cat
++ echo 'Collected results for lr0p0005_drop0p0_mDrop0p0 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p0'
++ echo
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p0005
++ MD_TAG=0p1
++ MMD_TAG=0p0
++ TAG=lr0p0005_drop0p1_mDrop0p0
++ EXP_NAME=ravdess_sweep_lr0p0005_drop0p1_mDrop0p0
++ echo ============================================================
++ echo 'Starting sweep run: lr0p0005_drop0p1_mDrop0p0'
++ echo '  LR               = 0.0005'
++ echo '  model.dropout    = 0.1'
++ echo '  modality_dropout = 0.0'
++ echo '  experiment.name  = ravdess_sweep_lr0p0005_drop0p1_mDrop0p0'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p0005_drop0p1_mDrop0p0 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.1 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.0005 training.augmentation.modality_dropout=0.0
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p0005 ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p0005 ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.082
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 2.071
+Metric val/loss improved by 0.004 >= min_delta = 0.0. New best score: 2.068
+Metric val/loss improved by 0.006 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.054
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.053
+Metric val/loss improved by 0.012 >= min_delta = 0.0. New best score: 2.041
+Metric val/loss improved by 0.026 >= min_delta = 0.0. New best score: 2.015
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 2.000
+Metric val/loss improved by 0.003 >= min_delta = 0.0. New best score: 1.997
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 1.983
+Metric val/loss improved by 0.005 >= min_delta = 0.0. New best score: 1.977
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 1.968
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 1.953
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 1.943
+Monitored metric val/loss did not improve in the last 15 records. Best score: 1.943. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/checkpoints/epoch=49-val/loss=1.9429.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/checkpoints/epoch=49-val/loss=1.9429.ckpt
++ echo 'Finished training for lr0p0005_drop0p1_mDrop0p0'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p0
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p0
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p0/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p0/metrics.csv
++ cat
++ echo 'Collected results for lr0p0005_drop0p1_mDrop0p0 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p0'
++ echo
++ for MDROP in '"${MODALITY_DROPS[@]}"'
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p0005
++ MD_TAG=0p0
++ MMD_TAG=0p05
++ TAG=lr0p0005_drop0p0_mDrop0p05
++ EXP_NAME=ravdess_sweep_lr0p0005_drop0p0_mDrop0p05
++ echo ============================================================
++ echo 'Starting sweep run: lr0p0005_drop0p0_mDrop0p05'
++ echo '  LR               = 0.0005'
++ echo '  model.dropout    = 0.0'
++ echo '  modality_dropout = 0.05'
++ echo '  experiment.name  = ravdess_sweep_lr0p0005_drop0p0_mDrop0p05'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p0005_drop0p0_mDrop0p05 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.0 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.0005 training.augmentation.modality_dropout=0.05
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p0005 ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p0005 ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.082
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 2.071
+Metric val/loss improved by 0.004 >= min_delta = 0.0. New best score: 2.068
+Metric val/loss improved by 0.006 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.054
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.053
+Metric val/loss improved by 0.012 >= min_delta = 0.0. New best score: 2.041
+Metric val/loss improved by 0.026 >= min_delta = 0.0. New best score: 2.015
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 2.000
+Metric val/loss improved by 0.003 >= min_delta = 0.0. New best score: 1.997
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 1.983
+Metric val/loss improved by 0.005 >= min_delta = 0.0. New best score: 1.977
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 1.968
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 1.953
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 1.943
+Monitored metric val/loss did not improve in the last 15 records. Best score: 1.943. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/checkpoints/epoch=49-val/loss=1.9429.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/checkpoints/epoch=49-val/loss=1.9429.ckpt
++ echo 'Finished training for lr0p0005_drop0p0_mDrop0p05'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p05
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p05
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p05/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p0_mDrop0p05/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p05/metrics.csv
++ cat
++ echo 'Collected results for lr0p0005_drop0p0_mDrop0p05 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p0_mDrop0p05'
++ echo
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p0005
++ MD_TAG=0p1
++ MMD_TAG=0p05
++ TAG=lr0p0005_drop0p1_mDrop0p05
++ EXP_NAME=ravdess_sweep_lr0p0005_drop0p1_mDrop0p05
++ echo ============================================================
++ echo 'Starting sweep run: lr0p0005_drop0p1_mDrop0p05'
++ echo '  LR               = 0.0005'
++ echo '  model.dropout    = 0.1'
++ echo '  modality_dropout = 0.05'
++ echo '  experiment.name  = ravdess_sweep_lr0p0005_drop0p1_mDrop0p05'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p0005_drop0p1_mDrop0p05 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.1 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.0005 training.augmentation.modality_dropout=0.05
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p0005 ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p0005 ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.082
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 2.071
+Metric val/loss improved by 0.004 >= min_delta = 0.0. New best score: 2.068
+Metric val/loss improved by 0.006 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.054
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.053
+Metric val/loss improved by 0.012 >= min_delta = 0.0. New best score: 2.041
+Metric val/loss improved by 0.026 >= min_delta = 0.0. New best score: 2.015
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 2.000
+Metric val/loss improved by 0.003 >= min_delta = 0.0. New best score: 1.997
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 1.983
+Metric val/loss improved by 0.005 >= min_delta = 0.0. New best score: 1.977
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 1.968
+Metric val/loss improved by 0.015 >= min_delta = 0.0. New best score: 1.953
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 1.943
+Monitored metric val/loss did not improve in the last 15 records. Best score: 1.943. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/checkpoints/epoch=49-val/loss=1.9429.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/checkpoints/epoch=49-val/loss=1.9429.ckpt
++ echo 'Finished training for lr0p0005_drop0p1_mDrop0p05'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p05
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p05
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p05/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p05/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p05/metrics.csv
++ cat
++ echo 'Collected results for lr0p0005_drop0p1_mDrop0p05 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p0005_drop0p1_mDrop0p05'
++ echo
++ for LR in '"${LRS[@]}"'
++ for MDROP in '"${MODALITY_DROPS[@]}"'
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p001
++ MD_TAG=0p0
++ MMD_TAG=0p0
++ TAG=lr0p001_drop0p0_mDrop0p0
++ EXP_NAME=ravdess_sweep_lr0p001_drop0p0_mDrop0p0
++ echo ============================================================
++ echo 'Starting sweep run: lr0p001_drop0p0_mDrop0p0'
++ echo '  LR               = 0.001'
++ echo '  model.dropout    = 0.0'
++ echo '  modality_dropout = 0.0'
++ echo '  experiment.name  = ravdess_sweep_lr0p001_drop0p0_mDrop0p0'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p001_drop0p0_mDrop0p0 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.0 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.001 training.augmentation.modality_dropout=0.0
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p001_ ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p001_ ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.097
+Metric val/loss improved by 0.035 >= min_delta = 0.0. New best score: 2.062
+Metric val/loss improved by 0.003 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.058
+Monitored metric val/loss did not improve in the last 15 records. Best score: 2.058. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/checkpoints/epoch=10-val/loss=2.0580.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/checkpoints/epoch=10-val/loss=2.0580.ckpt
++ echo 'Finished training for lr0p001_drop0p0_mDrop0p0'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p0
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p0
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p0/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p0/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p0/metrics.csv
++ cat
++ echo 'Collected results for lr0p001_drop0p0_mDrop0p0 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p0'
++ echo
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p001
++ MD_TAG=0p1
++ MMD_TAG=0p0
++ TAG=lr0p001_drop0p1_mDrop0p0
++ EXP_NAME=ravdess_sweep_lr0p001_drop0p1_mDrop0p0
++ echo ============================================================
++ echo 'Starting sweep run: lr0p001_drop0p1_mDrop0p0'
++ echo '  LR               = 0.001'
++ echo '  model.dropout    = 0.1'
++ echo '  modality_dropout = 0.0'
++ echo '  experiment.name  = ravdess_sweep_lr0p001_drop0p1_mDrop0p0'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p001_drop0p1_mDrop0p0 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.1 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.001 training.augmentation.modality_dropout=0.0
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p001_ ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p001_ ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.097
+Metric val/loss improved by 0.035 >= min_delta = 0.0. New best score: 2.062
+Metric val/loss improved by 0.003 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.058
+Monitored metric val/loss did not improve in the last 15 records. Best score: 2.058. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/checkpoints/epoch=10-val/loss=2.0580.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/checkpoints/epoch=10-val/loss=2.0580.ckpt
++ echo 'Finished training for lr0p001_drop0p1_mDrop0p0'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p0
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p0
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p0/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p0/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p0/metrics.csv
++ cat
++ echo 'Collected results for lr0p001_drop0p1_mDrop0p0 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p0'
++ echo
++ for MDROP in '"${MODALITY_DROPS[@]}"'
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p001
++ MD_TAG=0p0
++ MMD_TAG=0p05
++ TAG=lr0p001_drop0p0_mDrop0p05
++ EXP_NAME=ravdess_sweep_lr0p001_drop0p0_mDrop0p05
++ echo ============================================================
++ echo 'Starting sweep run: lr0p001_drop0p0_mDrop0p05'
++ echo '  LR               = 0.001'
++ echo '  model.dropout    = 0.0'
++ echo '  modality_dropout = 0.05'
++ echo '  experiment.name  = ravdess_sweep_lr0p001_drop0p0_mDrop0p05'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p001_drop0p0_mDrop0p05 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.0 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.001 training.augmentation.modality_dropout=0.05
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p001_ ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p001_ ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.097
+Metric val/loss improved by 0.035 >= min_delta = 0.0. New best score: 2.062
+Metric val/loss improved by 0.003 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.058
+Monitored metric val/loss did not improve in the last 15 records. Best score: 2.058. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/checkpoints/epoch=10-val/loss=2.0580.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/checkpoints/epoch=10-val/loss=2.0580.ckpt
++ echo 'Finished training for lr0p001_drop0p0_mDrop0p05'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p05
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p05
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p05/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p0_mDrop0p05/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p05/metrics.csv
++ cat
++ echo 'Collected results for lr0p001_drop0p0_mDrop0p05 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p0_mDrop0p05'
++ echo
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p001
++ MD_TAG=0p1
++ MMD_TAG=0p05
++ TAG=lr0p001_drop0p1_mDrop0p05
++ EXP_NAME=ravdess_sweep_lr0p001_drop0p1_mDrop0p05
++ echo ============================================================
++ echo 'Starting sweep run: lr0p001_drop0p1_mDrop0p05'
++ echo '  LR               = 0.001'
++ echo '  model.dropout    = 0.1'
++ echo '  modality_dropout = 0.05'
++ echo '  experiment.name  = ravdess_sweep_lr0p001_drop0p1_mDrop0p05'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p001_drop0p1_mDrop0p05 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.1 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.001 training.augmentation.modality_dropout=0.05
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p001_ ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p001_ ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.097
+Metric val/loss improved by 0.035 >= min_delta = 0.0. New best score: 2.062
+Metric val/loss improved by 0.003 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.058
+Monitored metric val/loss did not improve in the last 15 records. Best score: 2.058. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/checkpoints/epoch=10-val/loss=2.0580.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/checkpoints/epoch=10-val/loss=2.0580.ckpt
++ echo 'Finished training for lr0p001_drop0p1_mDrop0p05'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p05
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p05
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p05/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p001_drop0p1_mDrop0p05/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p05/metrics.csv
++ cat
++ echo 'Collected results for lr0p001_drop0p1_mDrop0p05 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p001_drop0p1_mDrop0p05'
++ echo
++ for LR in '"${LRS[@]}"'
++ for MDROP in '"${MODALITY_DROPS[@]}"'
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p002
++ MD_TAG=0p0
++ MMD_TAG=0p0
++ TAG=lr0p002_drop0p0_mDrop0p0
++ EXP_NAME=ravdess_sweep_lr0p002_drop0p0_mDrop0p0
++ echo ============================================================
++ echo 'Starting sweep run: lr0p002_drop0p0_mDrop0p0'
++ echo '  LR               = 0.002'
++ echo '  model.dropout    = 0.0'
++ echo '  modality_dropout = 0.0'
++ echo '  experiment.name  = ravdess_sweep_lr0p002_drop0p0_mDrop0p0'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p002_drop0p0_mDrop0p0 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.0 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.002 training.augmentation.modality_dropout=0.0
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p002_ ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p002_ ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.070
+Metric val/loss improved by 0.009 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.056
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 2.046
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.045
+Metric val/loss improved by 0.012 >= min_delta = 0.0. New best score: 2.033
+Metric val/loss improved by 0.030 >= min_delta = 0.0. New best score: 2.003
+Metric val/loss improved by 0.004 >= min_delta = 0.0. New best score: 1.999
+Metric val/loss improved by 0.025 >= min_delta = 0.0. New best score: 1.974
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 1.974
+Metric val/loss improved by 0.027 >= min_delta = 0.0. New best score: 1.947
+Monitored metric val/loss did not improve in the last 15 records. Best score: 1.947. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/checkpoints/epoch=49-val/loss=1.9470.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/checkpoints/epoch=49-val/loss=1.9470.ckpt
++ echo 'Finished training for lr0p002_drop0p0_mDrop0p0'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p0
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p0
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p0/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p0/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p0/metrics.csv
++ cat
++ echo 'Collected results for lr0p002_drop0p0_mDrop0p0 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p0'
++ echo
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p002
++ MD_TAG=0p1
++ MMD_TAG=0p0
++ TAG=lr0p002_drop0p1_mDrop0p0
++ EXP_NAME=ravdess_sweep_lr0p002_drop0p1_mDrop0p0
++ echo ============================================================
++ echo 'Starting sweep run: lr0p002_drop0p1_mDrop0p0'
++ echo '  LR               = 0.002'
++ echo '  model.dropout    = 0.1'
++ echo '  modality_dropout = 0.0'
++ echo '  experiment.name  = ravdess_sweep_lr0p002_drop0p1_mDrop0p0'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p002_drop0p1_mDrop0p0 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.1 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.002 training.augmentation.modality_dropout=0.0
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p002_ ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p002_ ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.070
+Metric val/loss improved by 0.009 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.056
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 2.046
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.045
+Metric val/loss improved by 0.012 >= min_delta = 0.0. New best score: 2.033
+Metric val/loss improved by 0.030 >= min_delta = 0.0. New best score: 2.003
+Metric val/loss improved by 0.004 >= min_delta = 0.0. New best score: 1.999
+Metric val/loss improved by 0.025 >= min_delta = 0.0. New best score: 1.974
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 1.974
+Metric val/loss improved by 0.027 >= min_delta = 0.0. New best score: 1.947
+Monitored metric val/loss did not improve in the last 15 records. Best score: 1.947. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/checkpoints/epoch=49-val/loss=1.9470.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/checkpoints/epoch=49-val/loss=1.9470.ckpt
++ echo 'Finished training for lr0p002_drop0p1_mDrop0p0'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p0
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p0
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p0/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p0/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p0/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p0/metrics.csv
++ cat
++ echo 'Collected results for lr0p002_drop0p1_mDrop0p0 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p0'
++ echo
++ for MDROP in '"${MODALITY_DROPS[@]}"'
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p002
++ MD_TAG=0p0
++ MMD_TAG=0p05
++ TAG=lr0p002_drop0p0_mDrop0p05
++ EXP_NAME=ravdess_sweep_lr0p002_drop0p0_mDrop0p05
++ echo ============================================================
++ echo 'Starting sweep run: lr0p002_drop0p0_mDrop0p05'
++ echo '  LR               = 0.002'
++ echo '  model.dropout    = 0.0'
++ echo '  modality_dropout = 0.05'
++ echo '  experiment.name  = ravdess_sweep_lr0p002_drop0p0_mDrop0p05'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p002_drop0p0_mDrop0p05 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.0 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.002 training.augmentation.modality_dropout=0.05
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p002_ ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p002_ ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.070
+Metric val/loss improved by 0.009 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.056
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 2.046
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.045
+Metric val/loss improved by 0.012 >= min_delta = 0.0. New best score: 2.033
+Metric val/loss improved by 0.030 >= min_delta = 0.0. New best score: 2.003
+Metric val/loss improved by 0.004 >= min_delta = 0.0. New best score: 1.999
+Metric val/loss improved by 0.025 >= min_delta = 0.0. New best score: 1.974
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 1.974
+Metric val/loss improved by 0.027 >= min_delta = 0.0. New best score: 1.947
+Monitored metric val/loss did not improve in the last 15 records. Best score: 1.947. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/checkpoints/epoch=49-val/loss=1.9470.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/checkpoints/epoch=49-val/loss=1.9470.ckpt
++ echo 'Finished training for lr0p002_drop0p0_mDrop0p05'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p05
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p05
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p05/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p0_mDrop0p05/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p05/metrics.csv
++ cat
++ echo 'Collected results for lr0p002_drop0p0_mDrop0p05 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p0_mDrop0p05'
++ echo
++ for MD in '"${MODEL_DROPS[@]}"'
++ LR_TAG=0p002
++ MD_TAG=0p1
++ MMD_TAG=0p05
++ TAG=lr0p002_drop0p1_mDrop0p05
++ EXP_NAME=ravdess_sweep_lr0p002_drop0p1_mDrop0p05
++ echo ============================================================
++ echo 'Starting sweep run: lr0p002_drop0p1_mDrop0p05'
++ echo '  LR               = 0.002'
++ echo '  model.dropout    = 0.1'
++ echo '  modality_dropout = 0.05'
++ echo '  experiment.name  = ravdess_sweep_lr0p002_drop0p1_mDrop0p05'
++ echo ============================================================
++ uv run python src/train.py experiment.name=ravdess_sweep_lr0p002_drop0p1_mDrop0p05 dataset.name=ravdess dataset.data_dir=/scratch/pbm52/emotion-detection-mm/multimodal-dataset 'dataset.modalities=[audio, video]' dataset.num_classes=8 model.output_dim=256 model.hidden_dim=512 model.dropout=0.1 model.encoders.audio.hidden_dim=512 model.encoders.audio.output_dim=256 model.encoders.audio.num_layers=3 model.encoders.audio.dropout=0.1 model.encoders.video.hidden_dim=512 model.encoders.video.output_dim=256 model.encoders.video.dropout=0.1 training.max_epochs=80 training.early_stopping_patience=15 training.learning_rate=0.002 training.augmentation.modality_dropout=0.05
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/__init__.py:36: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  __import__("pkg_resources").declare_namespace(__name__)
+[rank: 0] Global seed set to 42
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p002_ ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/lightning_fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python3 src/train.py experiment.name=ravdess_sweep_lr0p002_ ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Missing logger folder: outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/tb_logs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name        | Type             | Params
+-------------------------------------------------
+0 | encoders    | ModuleDict       | 6.0 M 
+1 | fusion_head | Sequential       | 266 K 
+2 | criterion   | CrossEntropyLoss | 0     
+-------------------------------------------------
+6.3 M     Trainable params
+0         Non-trainable params
+6.3 M     Total params
+25.252    Total estimated model params size (MB)
+/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/.venv/lib/python3.10/site-packages/pytorch_lightning/loops/fit_loop.py:280: PossibleUserWarning: The number of training batches (36) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+Metric val/loss improved. New best score: 2.070
+Metric val/loss improved by 0.009 >= min_delta = 0.0. New best score: 2.061
+Metric val/loss improved by 0.002 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.059
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.058
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.057
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.056
+Metric val/loss improved by 0.010 >= min_delta = 0.0. New best score: 2.046
+Metric val/loss improved by 0.001 >= min_delta = 0.0. New best score: 2.045
+Metric val/loss improved by 0.012 >= min_delta = 0.0. New best score: 2.033
+Metric val/loss improved by 0.030 >= min_delta = 0.0. New best score: 2.003
+Metric val/loss improved by 0.004 >= min_delta = 0.0. New best score: 1.999
+Metric val/loss improved by 0.025 >= min_delta = 0.0. New best score: 1.974
+Metric val/loss improved by 0.000 >= min_delta = 0.0. New best score: 1.974
+Metric val/loss improved by 0.027 >= min_delta = 0.0. New best score: 1.947
+Monitored metric val/loss did not improve in the last 15 records. Best score: 1.947. Signaling Trainer to stop.
+You are using a CUDA device ('NVIDIA A100-PCIE-40GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+Restoring states from the checkpoint path at outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/checkpoints/epoch=49-val/loss=1.9470.ckpt
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Loaded model weights from the checkpoint at outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/checkpoints/epoch=49-val/loss=1.9470.ckpt
++ echo 'Finished training for lr0p002_drop0p1_mDrop0p05'
++ SAVE_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05
++ RUN_OUT=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p05
++ mkdir -p /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p05
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/results.json ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/results.json /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/confusion_matrix.png ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/confusion_matrix.png /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/confusion_matrix.npy ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/confusion_matrix.npy /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p05/
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/best.ckpt ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/best.ckpt /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p05/
+++ ls -td /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/csv_logs/version_0
+++ head -n 1
++ METRICS_SRC_DIR=/scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/csv_logs/version_0
++ '[' -n /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/csv_logs/version_0 ']'
++ '[' -f /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/csv_logs/version_0/metrics.csv ']'
++ cp /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/outputs/ravdess_sweep_lr0p002_drop0p1_mDrop0p05/csv_logs/version_0/metrics.csv /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p05/metrics.csv
++ cat
++ echo 'Collected results for lr0p002_drop0p1_mDrop0p05 into /scratch/pbm52/emotion-detection-mm/multimodal-emotion-detection/grid_sweep_results/lr0p002_drop0p1_mDrop0p05'
++ echo
+++ date
++ echo 'All grid sweep runs completed at: Thu Dec  4 20:30:31 EST 2025'

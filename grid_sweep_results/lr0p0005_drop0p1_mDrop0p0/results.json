@@ -1,0 +1,68 @@
+{
+  "best_model_path": "outputs/ravdess_sweep_lr0p0005_drop0p1_mDrop0p0/checkpoints/epoch=49-val/loss=1.9429.ckpt",
+  "best_val_loss": 1.9428753852844238,
+  "config": {
+    "seed": 42,
+    "experiment": {
+      "name": "ravdess_sweep_lr0p0005_drop0p1_mDrop0p0",
+      "save_dir": "./outputs",
+      "save_top_k": 1,
+      "log_every_n_steps": 50
+    },
+    "dataset": {
+      "name": "ravdess",
+      "data_dir": "/scratch/pbm52/emotion-detection-mm/multimodal-dataset",
+      "modalities": [
+        "audio",
+        "video"
+      ],
+      "batch_size": 32,
+      "num_workers": 4,
+      "num_classes": 8
+    },
+    "model": {
+      "output_dim": 256,
+      "fusion_type": "early",
+      "hidden_dim": 512,
+      "num_heads": 4,
+      "dropout": 0.1,
+      "encoders": {
+        "audio": {
+          "type": "sequence",
+          "input_dim": 1,
+          "encoder_type": "lstm",
+          "hidden_dim": 512,
+          "output_dim": 256,
+          "num_layers": 3,
+          "dropout": 0.1
+        },
+        "video": {
+          "type": "frame",
+          "input_dim": 1024,
+          "temporal_pooling": "attention",
+          "hidden_dim": 512,
+          "output_dim": 256,
+          "dropout": 0.1
+        }
+      }
+    },
+    "training": {
+      "optimizer": "adamw",
+      "learning_rate": 0.0005,
+      "weight_decay": 0.0001,
+      "scheduler": "none",
+      "max_epochs": 80,
+      "early_stopping_patience": 15,
+      "gradient_clip_norm": 1.0,
+      "augmentation": {
+        "modality_dropout": 0.0
+      }
+    },
+    "evaluation": {
+      "num_calibration_bins": 15
+    },
+    "outputs": {
+      "experiments_dir": "./experiments"
+    }
+  }
+}
